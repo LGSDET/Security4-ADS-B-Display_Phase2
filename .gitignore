@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+#Google BigQuery
+YourJsonFile.json
+
+#Customs
+/Components/OpenGLv0.5BDS2006/Component/Win32/*
+/Components/OpenGLv0.5BDS2006/Component/Win64/*
+/HashTable
+/Map
+/Components/OpenGLv0.5BDS2006/Component/__history
+/Win64
