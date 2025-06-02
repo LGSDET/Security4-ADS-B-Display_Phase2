@@ -221,7 +221,8 @@ __published:	// IDE-managed Components
 	void __fastcall UseSBSLocalClick(TObject *Sender);
 
 private:	// User declarations
-
+	bool __fastcall FindAircraftAtPosition(int X, int Y, uint32_t &outICAO);
+  	void __fastcall ShowAircraftInfo(uint32_t icao);
 
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);

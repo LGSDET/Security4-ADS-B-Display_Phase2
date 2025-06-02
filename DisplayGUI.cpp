@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <filesystem>
 #include <fileapi.h>
-
 #pragma hdrstop
 
 #include "DisplayGUI.h"
@@ -48,6 +47,7 @@
 #pragma link "cspin"
 #pragma resource "*.dfm"
 TForm1 *Form1;
+
  //---------------------------------------------------------------------------
  static void RunPythonScript(AnsiString scriptPath,AnsiString args);
  static bool DeleteFilesWithExtension(AnsiString dirPath, AnsiString extension);
@@ -546,58 +546,184 @@ void __fastcall TForm1::DrawObjects(void)
    }
  }
 }
-//---------------------------------------------------------------------------
-void __fastcall TForm1::ObjectDisplayMouseDown(TObject *Sender,
-	  TMouseButton Button, TShiftState Shift, int X, int Y)
-{
-printf("Button clicked");
- if (Button==mbLeft)
-   {
-	if (Shift.Contains(ssCtrl))
-	{
+//hyundo
+// 전역 변수 추가
+uint32_t FoundAircraftICAO = 0; // 우클릭으로 찾은 비행기 ICAO 저장
 
-	}
-	else
-	{
-	 g_MouseLeftDownX = X;
-	 g_MouseLeftDownY = Y;
-	 g_MouseDownMask |= LEFT_MOUSE_DOWN ;
-	 g_EarthView->StartDrag(X, Y, NAV_DRAG_PAN);
-	}
-  }
- else if (Button==mbRight)
+// 마우스 클릭 처리
+void __fastcall TForm1::ObjectDisplayMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+  if (Button==mbRight)
   {
-	printf("rightButton clicked");
-  if (AreaTemp)
-   {
-	if (AreaTemp->NumPoints<MAX_AREA_POINTS)
-	{
-	  AddPoint(X, Y);
-	}
-	else ShowMessage("Max Area Points Reached");
-   }
-  else
-   {
-	//hyundo
-	TFormPassword *pwdForm = new TFormPassword(this);
-	
-   if (pwdForm->ShowModal() == mrOk)
+    // 우클릭으로 주변 비행기 먼저 찾기
+    if (FindAircraftAtPosition(X, Y, FoundAircraftICAO))
     {
-      // 비밀번호가 맞으면 HookTrack 호출!
-      if (Shift.Contains(ssCtrl)) HookTrack(X,Y,true);
-      else HookTrack(X,Y,false);
+      // 비행기 있으면 비밀번호 창 띄우기
+      TFormPassword *pwdForm = new TFormPassword(this);
+      if (pwdForm->ShowModal() == mrOk)
+      {
+        // 비밀번호 맞으면, 우클릭 시점의 비행기 상세 정보 출력
+        ShowAircraftInfo(FoundAircraftICAO);
+      }
+      else
+      {
+        ShowMessage(L"비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
+      }
+      delete pwdForm;
     }
     else
     {
-      ShowMessage(L"비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
+		ShowMessage(L"암것도 없슴다");
     }
-    delete pwdForm;
-
-   }
   }
 
- else if (Button==mbMiddle)  ResetXYOffset();
+  // 기존 좌클릭 처리 등은 그대로 유지
+  if (Button==mbLeft)
+  {
+    g_MouseLeftDownX = X;
+    g_MouseLeftDownY = Y;
+    g_MouseDownMask |= LEFT_MOUSE_DOWN ;
+    g_EarthView->StartDrag(X, Y, NAV_DRAG_PAN);
+  }
 }
+
+// 비행기 찾기 (좌표 기준으로 최근접 비행기 ICAO 리턴)
+bool __fastcall TForm1::FindAircraftAtPosition(int X, int Y, uint32_t &outICAO)
+{
+  double VLat, VLon, dlat, dlon, Range;
+  int X1 = X, Y1 = (ObjectDisplay->Height-1)-Y;
+  double MinRange=16.0;
+
+  if  ((X1<Map_v[0].x) || (X1>Map_v[1].x) || (Y1<Map_v[0].y) || (Y1>Map_v[3].y))
+    return false;
+
+  VLat=atan(sinh(M_PI * (2 * (Map_w[1].y-(yf*(Map_v[3].y-Y1))))))*(180.0 / M_PI);
+  VLon=(Map_w[1].x-(xf*(Map_v[1].x-X1)))*360.0;
+
+  uint32_t *Key;
+  ght_iterator_t iterator;
+  TADS_B_Aircraft* Data;
+
+  for(Data = (TADS_B_Aircraft *)ght_first(HashTable, &iterator,(const void **) &Key);
+			  Data; Data = (TADS_B_Aircraft *)ght_next(HashTable, &iterator, (const void **)&Key))
+	{
+	  if (Data->HaveLatLon)
+	  {
+	   dlat= VLat-Data->Latitude;
+	   dlon= VLon-Data->Longitude;
+	   Range=sqrt(dlat*dlat+dlon*dlon);
+	   if (Range<MinRange)
+	   {
+		outICAO=Data->ICAO;
+		MinRange=Range;
+	   }
+	  }
+	}
+
+  return (MinRange< 0.1); // 반경 이내 비행기가 있으면 true
+}
+
+// 비행기 상세정보 표시 (TrackHook처럼 레이블 업데이트)
+void __fastcall TForm1::ShowAircraftInfo(uint32_t icao)
+{
+  TADS_B_Aircraft *Data= (TADS_B_Aircraft *)ght_get(HashTable,sizeof(icao), &icao);
+  if (Data)
+  {
+    TrackHook.Valid_CC=true;
+    TrackHook.ICAO_CC=icao;
+    ICAOLabel->Caption=Data->HexAddr;
+    if (Data->HaveFlightNum)
+      FlightNumLabel->Caption=Data->FlightNum;
+    else
+      FlightNumLabel->Caption="N/A";
+    if (Data->HaveLatLon)
+    {
+      CLatLabel->Caption=DMS::DegreesMinutesSecondsLat(Data->Latitude).c_str();
+      CLonLabel->Caption=DMS::DegreesMinutesSecondsLon(Data->Longitude).c_str();
+    }
+    else
+    {
+      CLatLabel->Caption="N/A";
+      CLonLabel->Caption="N/A";
+    }
+    if (Data->HaveSpeedAndHeading)
+    {
+      SpdLabel->Caption=FloatToStrF(Data->Speed, ffFixed,12,2)+" KTS  VRATE:"+FloatToStrF(Data->VerticalRate,ffFixed,12,2);
+      HdgLabel->Caption=FloatToStrF(Data->Heading, ffFixed,12,2)+" DEG";
+    }
+    else
+    {
+      SpdLabel->Caption="N/A";
+      HdgLabel->Caption="N/A";
+    }
+    if (Data->Altitude)
+      AltLabel->Caption= FloatToStrF(Data->Altitude, ffFixed,12,2)+" FT";
+    else
+      AltLabel->Caption="N/A";
+
+    MsgCntLabel->Caption="Raw: "+IntToStr((int)Data->NumMessagesRaw)+" SBS: "+IntToStr((int)Data->NumMessagesSBS);
+    TrkLastUpdateTimeLabel->Caption=TimeToChar(Data->LastSeen);
+
+    // 시각화도 필요하면 여기서 그리기 로직 추가!
+  }
+  else
+  {
+    ShowMessage(L"비행기 정보 조회 실패");
+  }
+}
+// hyundo end
+//---------------------------------------------------------------------------
+// void __fastcall TForm1::ObjectDisplayMouseDown(TObject *Sender,
+// 	  TMouseButton Button, TShiftState Shift, int X, int Y)
+// {
+// printf("Button clicked");
+//  if (Button==mbLeft)
+//    {
+// 	if (Shift.Contains(ssCtrl))
+// 	{
+
+// 	}
+// 	else
+// 	{
+// 	 g_MouseLeftDownX = X;
+// 	 g_MouseLeftDownY = Y;
+// 	 g_MouseDownMask |= LEFT_MOUSE_DOWN ;
+// 	 g_EarthView->StartDrag(X, Y, NAV_DRAG_PAN);
+// 	}
+//   }
+//  else if (Button==mbRight)
+//   {
+//   if (AreaTemp)
+//    {
+// 	if (AreaTemp->NumPoints<MAX_AREA_POINTS)
+// 	{
+// 	  AddPoint(X, Y);
+// 	}
+// 	else ShowMessage("Max Area Points Reached");
+//    }
+//   else
+//    {
+// 	//hyundo
+// 	TFormPassword *pwdForm = new TFormPassword(this);
+	
+//    if (pwdForm->ShowModal() == mrOk)
+//     {
+//       // 비밀번호가 맞으면 HookTrack 호출!
+//       if (Shift.Contains(ssCtrl)) HookTrack(X,Y,true);
+//       else HookTrack(X,Y,false);
+//     }
+//     else
+//     {
+//       ShowMessage(L"비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
+//     }
+//     delete pwdForm;
+
+//    }
+//   }
+
+//  else if (Button==mbMiddle)  ResetXYOffset();
+// }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::ObjectDisplayMouseUp(TObject *Sender,

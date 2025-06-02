@@ -17,7 +17,6 @@ __published:	// IDE-managed Components
 	TLabel *title;
 	TLabel *flightNumber;
 	TEdit *flightNumberBox;
-	void __fastcall titleClick(TObject *Sender);
 	void __fastcall btnOkClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

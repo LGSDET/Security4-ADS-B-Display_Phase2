@@ -30,7 +30,6 @@ object FormPassword: TFormPassword
     Font.Name = 'Segoe UI'
     Font.Style = []
     ParentFont = False
-    OnClick = titleClick
   end
   object flightNumber: TLabel
     Left = 8
@@ -46,7 +45,7 @@ object FormPassword: TFormPassword
     Height = 23
     PasswordChar = '*'
     TabOrder = 0
-    Text = 'Edit1'
+    Text = ''
   end
   object btnOk: TButton
     Left = 67
