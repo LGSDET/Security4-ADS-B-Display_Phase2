@@ -36,7 +36,7 @@ object FormPassword: TFormPassword
     Top = 60
     Width = 78
     Height = 15
-    Caption = 'Flight number:'
+    Caption = 'ICAO:'
   end
   object edtPassword: TEdit
     Left = 67

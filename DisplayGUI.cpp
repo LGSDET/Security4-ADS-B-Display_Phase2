@@ -561,6 +561,7 @@ void __fastcall TForm1::ObjectDisplayMouseDown(TObject *Sender,
     {
       // 비행기 있으면 비밀번호 창 띄우기
       TFormPassword *pwdForm = new TFormPassword(this);
+	  pwdForm->SetICAOText(IntToHex((int)FoundAircraftICAO, 6));
       if (pwdForm->ShowModal() == mrOk)
       {
         // 비밀번호 맞으면, 우클릭 시점의 비행기 상세 정보 출력

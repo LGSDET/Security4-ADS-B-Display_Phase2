@@ -21,6 +21,7 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
 	__fastcall TFormPassword(TComponent* Owner);
+	void __fastcall SetICAOText(AnsiString icao); 
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TFormPassword *FormPassword;

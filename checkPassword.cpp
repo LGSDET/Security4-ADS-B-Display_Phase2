@@ -135,3 +135,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         ShowMessage(L"JSON Parse Exception: " + e.Message);
     }
 }
+void __fastcall TFormPassword::SetICAOText(AnsiString icao)
+{
+	flightNumberBox->Text = icao;  
+}
