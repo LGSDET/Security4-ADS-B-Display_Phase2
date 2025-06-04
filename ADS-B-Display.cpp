@@ -5,8 +5,8 @@
 #include <tchar.h>
 //---------------------------------------------------------------------------
 USEFORM("DisplayGUI.cpp", Form1);
-USEFORM("AreaDialog.cpp", AreaConfirm);
 USEFORM("checkPassword.cpp", FormPassword);
+USEFORM("AreaDialog.cpp", AreaConfirm);
 //---------------------------------------------------------------------------
 static FILE* pCout = NULL;
 static void SetStdOutToNewConsole(void);
