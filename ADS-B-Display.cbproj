@@ -187,6 +187,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DynamicRTL>false</DynamicRTL>
         <ILINK_LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>C:\OpenSSL-Win64\include;$(IncludePath)</IncludePath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64x)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -330,6 +331,12 @@
             <DependentOn>ntds2d.h</DependentOn>
             <BuildOrder>30</BuildOrder>
         </CppCompile>
+        <CppCompile Include="OpenSSLLoader.cpp">
+            <BuildOrder>41</BuildOrder>
+        </CppCompile>
+        <None Include="OpenSSLLoader.h">
+            <BuildOrder>40</BuildOrder>
+        </None>
         <CppCompile Include="PointInPolygon.cpp">
             <DependentOn>PointInPolygon.h</DependentOn>
             <BuildOrder>32</BuildOrder>
