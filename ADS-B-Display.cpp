@@ -29,7 +29,7 @@ static void SetStdOutToNewConsole(void)
 OpenSSLLoader ssl;
 SSL_CTX* g_ssl_ctx = nullptr;  // 전역으로 SSL_CTX 보관 (필요시)
 
-#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "ws2_32.a")
 
 bool myInitSSL()
 {

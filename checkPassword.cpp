@@ -22,7 +22,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
 {
     if (failedAttempts >= 5)
     {
-        ShowMessage(L"5회 이상 비밀번호 오류! 로그인 차단.");
+        ShowMessage(L"5 times this password is incorrect! Login blocked.");
         return;
     }
 
@@ -31,7 +31,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     HINTERNET hInternet = InternetOpen(L"MyApp", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet)
     {
-        ShowMessage(L"InternetOpen 실패!");
+        ShowMessage(L"InternetOpen Failure!");
         return;
     }
 
@@ -43,7 +43,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         INTERNET_SERVICE_HTTP, 0, 0);
     if (!hConnect)
     {
-        ShowMessage(L"InternetConnect 실패!");
+        ShowMessage(L"InternetConnect Failure!");
         InternetCloseHandle(hInternet);
         return;
     }
@@ -54,7 +54,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
     if (!hRequest)
     {
-        ShowMessage(L"HttpOpenRequest 실패!");
+        ShowMessage(L"HttpOpenRequest Failure!");
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
         return;
@@ -65,7 +65,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         L"x-api-key: " API_KEY L"\r\n";  // ✨ config.h 사용
     if (!HttpAddRequestHeaders(hRequest, headers, -1, HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE))
     {
-        ShowMessage(L"HttpAddRequestHeaders 실패!");
+        ShowMessage(L"HttpAddRequestHeaders Failure!");
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
@@ -76,7 +76,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
 
     if (!HttpSendRequestA(hRequest, NULL, 0, (LPVOID)jsonData.c_str(), jsonData.Length()))
     {
-        ShowMessage(L"HttpSendRequest 실패!");
+        ShowMessage(L"HttpSendRequest Failure!");
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
@@ -120,7 +120,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
 
                 if (failedAttempts >= 5)
                 {
-                    ShowMessage(L"5회 이상 비밀번호 오류! 로그인 차단.");
+                    ShowMessage(L"5 times this password is incorrect! Login blocked..");
                 }
             }
             delete json;
