@@ -24,6 +24,9 @@
 #include <IdTCPClient.hpp>
 #include <IdTCPConnection.hpp>
 #include "cspin.h"
+#include "TLSSession.h"
+#include "Encryptor.h"
+#include "SecureLog.h"
 
 typedef float T_GL_Color[4];
 
@@ -68,6 +71,7 @@ protected:
 	void __fastcall Execute(void);
 public:
 	 bool UseFileInsteadOfNetwork;
+     bool UseTLS;
 	 bool First;
 	 __int64 LastTime;
 	__fastcall TTCPClientRawHandleThread(bool value);
@@ -86,6 +90,7 @@ protected:
 	void __fastcall Execute(void);
 public:
 	 bool UseFileInsteadOfNetwork;
+     bool UseTLS;
 	 bool First;
 	 __int64 LastTime;
 	__fastcall TTCPClientSBSHandleThread(bool value);
@@ -239,8 +244,9 @@ public:		// User declarations
     void __fastcall LoadMap(int Type);
     void __fastcall CreateBigQueryCSV(void);
     void __fastcall CloseBigQueryCSV(void);
-
-
+	TLSSession  *TLSSessionSBS;
+	TLSSession  *TLSSessionRAW;
+	Encryptor *encryption;
 	int                        MouseDownX,MouseDownY;
 	bool                       MouseDown;
 	TTrackHook                 TrackHook;

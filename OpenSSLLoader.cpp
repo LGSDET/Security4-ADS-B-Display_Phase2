@@ -1,28 +1,28 @@
+// OpenSSLLoader.cpp
 #include "OpenSSLLoader.h"
 
-OpenSSLLoader::~OpenSSLLoader()
-{
-    Unload();
+OpenSSLLoader& OpenSSLLoader::Instance() {
+    static OpenSSLLoader instance;
+    return instance;
 }
 
-bool OpenSSLLoader::Load()
-{
+OpenSSLLoader::~OpenSSLLoader() {
+    //Unload();
+}
+
+bool OpenSSLLoader::Load() {
     if (hModule)
-        return true;  // 이미 로드됨
+        return true;
 
-	// OpenSSL DLL 경로 (설치 위치에 맞게 변경)
-	// 보통 C:\OpenSSL-Win64\bin 폴더에 libssl-3.dll, libcrypto-3.dll 존재
-	// 여기서는 libssl-3.dll만 로딩, libcrypto-3.dll은 의존 로딩됨
-	SetDllDirectory(L"C:\\OpenSSL-Win64\\bin");
+    SetDllDirectory(L"C:\\OpenSSL-Win64\\bin");
+    hModule = LoadLibraryW(L"C:\\OpenSSL-Win64\\bin\\libssl-3-x64.dll");
+    if (!hModule) {
+		MessageBox(nullptr, _T("OpenSSL DLL 로드 실패!"), _T("Error"), MB_OK | MB_ICONERROR);
+		printf("OpenSSL DLL 로드 실패!");
+        return false;
+    }
 
-	hModule = LoadLibraryW(L"C:\\OpenSSL-Win64\\bin\\libssl-3-x64.dll");
-	if (!hModule)
-	{
-			MessageBox(nullptr, _T("OpenSSL DLL 로드 실패! CP#1"), _T("Error"), MB_OK | MB_ICONERROR);
-
-		return false;
-	}
-
+    // 필수 함수들 로딩
     OPENSSL_init_ssl = (decltype(OPENSSL_init_ssl))GetProcAddress(hModule, "OPENSSL_init_ssl");
     SSL_CTX_new = (decltype(SSL_CTX_new))GetProcAddress(hModule, "SSL_CTX_new");
     SSL_CTX_free = (decltype(SSL_CTX_free))GetProcAddress(hModule, "SSL_CTX_free");
@@ -33,28 +33,34 @@ bool OpenSSLLoader::Load()
     SSL_CTX_check_private_key = (decltype(SSL_CTX_check_private_key))GetProcAddress(hModule, "SSL_CTX_check_private_key");
     SSL_CTX_set_verify = (decltype(SSL_CTX_set_verify))GetProcAddress(hModule, "SSL_CTX_set_verify");
 
+    // 암호화/세션 관련 함수 로딩
+    SSL_new = (decltype(SSL_new))GetProcAddress(hModule, "SSL_new");
+    SSL_set_fd = (decltype(SSL_set_fd))GetProcAddress(hModule, "SSL_set_fd");
+    SSL_connect = (decltype(SSL_connect))GetProcAddress(hModule, "SSL_connect");
+    SSL_read = (decltype(SSL_read))GetProcAddress(hModule, "SSL_read");
+    SSL_shutdown = (decltype(SSL_shutdown))GetProcAddress(hModule, "SSL_shutdown");
+    SSL_free = (decltype(SSL_free))GetProcAddress(hModule, "SSL_free");
+    SSL_CTX_set_ciphersuites = (decltype(SSL_CTX_set_ciphersuites))GetProcAddress(hModule, "SSL_CTX_set_ciphersuites");
+    SSL_get_error = (decltype(SSL_get_error))GetProcAddress(hModule, "SSL_get_error");
+    SSL_get_fd = (decltype(SSL_get_fd))GetProcAddress(hModule, "SSL_get_fd");
+    SSL_is_init_finished = (decltype(SSL_is_init_finished))GetProcAddress(hModule, "SSL_is_init_finished");
+	SSL_write = (decltype(SSL_write))GetProcAddress(hModule, "SSL_write");
+
+    // 로딩 확인
     if (!OPENSSL_init_ssl || !SSL_CTX_new || !SSL_CTX_free || !TLS_client_method ||
         !SSL_CTX_load_verify_locations || !SSL_CTX_use_certificate_file || !SSL_CTX_use_PrivateKey_file ||
-        !SSL_CTX_check_private_key || !SSL_CTX_set_verify)
-    {
+        !SSL_CTX_check_private_key || !SSL_CTX_set_verify || !SSL_new || !SSL_set_fd ||
+        !SSL_connect || !SSL_read || !SSL_shutdown || !SSL_free || !SSL_CTX_set_ciphersuites ||
+		!SSL_get_error || !SSL_get_fd || !SSL_is_init_finished || !SSL_write) {
+        printf("check openssl loading failed\n");
         Unload();
         return false;
     }
 
-	SSL_new = (decltype(SSL_new))GetProcAddress(hModule, "SSL_new");
-	SSL_set_fd = (decltype(SSL_set_fd))GetProcAddress(hModule, "SSL_set_fd");
-	SSL_connect = (decltype(SSL_connect))GetProcAddress(hModule, "SSL_connect");
-	SSL_read = (decltype(SSL_read))GetProcAddress(hModule, "SSL_read");
-	SSL_shutdown = (decltype(SSL_shutdown))GetProcAddress(hModule, "SSL_shutdown");
-	SSL_free = (decltype(SSL_free))GetProcAddress(hModule, "SSL_free");
+    return true;
+}
 
-	// 모두 로딩 성공했는지 확인
-	if (!SSL_new || !SSL_set_fd || !SSL_connect || !SSL_read || !SSL_shutdown || !SSL_free)
-		return false;    return true;
-	}
-
-void OpenSSLLoader::Unload()
-{
+void OpenSSLLoader::Unload() {
     if (hModule) {
         FreeLibrary(hModule);
         hModule = nullptr;
@@ -68,6 +74,16 @@ void OpenSSLLoader::Unload()
         SSL_CTX_use_PrivateKey_file = nullptr;
         SSL_CTX_check_private_key = nullptr;
         SSL_CTX_set_verify = nullptr;
+        SSL_new = nullptr;
+        SSL_set_fd = nullptr;
+        SSL_connect = nullptr;
+        SSL_read = nullptr;
+        SSL_shutdown = nullptr;
+        SSL_free = nullptr;
+        SSL_CTX_set_ciphersuites = nullptr;
+        SSL_get_error = nullptr;
+        SSL_get_fd = nullptr;
+        SSL_is_init_finished = nullptr;
+		SSL_write = nullptr;
     }
 }
-

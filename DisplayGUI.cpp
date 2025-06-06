@@ -46,6 +46,9 @@
 #pragma link "HashTable\Lib\Win64\Release\HashTableLib.a"
 #pragma link "cspin"
 #pragma resource "*.dfm"
+
+
+
 TForm1 *Form1;
 
  //---------------------------------------------------------------------------
@@ -195,7 +198,21 @@ __fastcall TForm1::TForm1(TComponent* Owner)
  BigQueryCSV=NULL;
  BigQueryRowCount=0;
  BigQueryFileCount=0;
+ SecureLog::LogInfo("프로그램이 시작되었습니다.");
+ if (!OpenSSLLoader::Instance().Load()) {
+	  throw Sysutils::Exception("openssl loader Failed");
+ }
+ if (!CryptoLoader::Instance().Load()) {
+	  throw Sysutils::Exception("CryptoLoader loader Failed");
+ }
+
+ TLSSessionSBS = new TLSSession();
+ TLSSessionSBS->Init();
+ TLSSessionRAW = new TLSSession();
+ TLSSessionRAW->Init();
+ encryption = new Encryptor();
  printf("init complete\n");
+
 }
 //---------------------------------------------------------------------------
 __fastcall TForm1::~TForm1()
@@ -206,6 +223,8 @@ __fastcall TForm1::~TForm1()
  if (g_GETileManager) delete g_GETileManager;
  delete g_MasterLayer;
  delete g_Storage;
+ delete TLSSessionSBS;
+ delete TLSSessionRAW;
  if (LoadMapFromInternet)
  {
    if (g_Keyhole) delete g_Keyhole;
@@ -569,7 +588,8 @@ void __fastcall TForm1::ObjectDisplayMouseDown(TObject *Sender,
       }
       else
       {
-        ShowMessage(L"비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
+		ShowMessage(L"비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
+		SecureLog::LogWarning("비밀번호 인증 실패. 상세정보를 볼 수 없습니다.");
       }
       delete pwdForm;
     }
@@ -1229,34 +1249,44 @@ void __fastcall TTCPClientRawHandleThread::HandleInput(void)
 
 	  RawToAircraft(&mm,ADS_B_Aircraft);
   }
-  else  printf("Raw Decode Error:%d\n",Status);
+  else {
+   printf("Raw Decode Error:%d\n",Status);
+   SecureLog::LogWarning(std::string(AnsiString("Raw Decode Error: " + IntToStr(Status)).c_str()));
+  }
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::RawConnectButtonClick(TObject *Sender)
 {
  IdTCPClientRaw->Host=RawIpAddress->Text;
- IdTCPClientRaw->Port=30002;
+// IdTCPClientRaw->Port=30002;
 
  if ((RawConnectButton->Caption=="Raw Connect") && (Sender!=NULL))
  {
   try
    {
-   IdTCPClientRaw->Connect();
+   //IdTCPClientRaw->Connect();
+   TLSSessionRAW->Connect(RawIpAddress->Text, 30005);
    TCPClientRawHandleThread = new TTCPClientRawHandleThread(true);
    TCPClientRawHandleThread->UseFileInsteadOfNetwork=false;
+   TCPClientRawHandleThread->UseTLS=true;
    TCPClientRawHandleThread->FreeOnTerminate=TRUE;
    TCPClientRawHandleThread->Resume();
+   RawConnectButton->Caption="Raw Disconnect";
+   RawPlaybackButton->Enabled=false;
    }
    catch (const EIdException& e)
    {
-    ShowMessage("Error while connecting: "+e.Message);
+	ShowMessage("Error while connecting: "+e.Message);
+	std::string msg = "Error while connecting " +  std::string(AnsiString(e.Message).c_str());
+ 	SecureLog::LogError(msg);
    }
  }
  else
   {
 	TCPClientRawHandleThread->Terminate();
-	IdTCPClientRaw->Disconnect();
-	IdTCPClientRaw->IOHandler->InputBuffer->Clear();
+   //	IdTCPClientRaw->Disconnect();
+   //	IdTCPClientRaw->IOHandler->InputBuffer->Clear();
+	TLSSessionRAW->Disconnect();
 	RawConnectButton->Caption="Raw Connect";
 	RawPlaybackButton->Enabled=true;
   }
@@ -1268,6 +1298,7 @@ void __fastcall TForm1::IdTCPClientRawConnected(TObject *Sender)
    IdTCPClientRaw->Socket->Binding->SetKeepAliveValues(true,60*1000,15*1000);
    RawConnectButton->Caption="Raw Disconnect";
    RawPlaybackButton->Enabled=false;
+   SecureLog::LogInfo("disconnect with Raw Server");
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::IdTCPClientRawDisconnected(TObject *Sender)
@@ -1282,15 +1313,19 @@ void __fastcall TForm1::RawRecordButtonClick(TObject *Sender)
   if (RecordRawSaveDialog->Execute())
    {
 	// First, check if the file exists.
-	if (FileExists(RecordRawSaveDialog->FileName))
+	if (FileExists(RecordRawSaveDialog->FileName)) {
 	  ShowMessage("File "+RecordRawSaveDialog->FileName+"already exists. Cannot overwrite.");
-	else
+      std::string msg = "File " + std::string(AnsiString(RecordRawSaveDialog->FileName).c_str()) + " already exists. Cannot overwrite.";
+	  SecureLog::LogWarning(msg);
+	} else
 	{
 		// Open a file for writing. Creates the file if it doesn't exist, or overwrites it if it does.
-	RecordRawStream= new TStreamWriter(RecordRawSaveDialog->FileName, false);
+	   RecordRawStream= new TStreamWriter(RecordRawSaveDialog->FileName, false);
+       SecureLog::LogInfo("start Raw Record");
 	if (RecordRawStream==NULL)
 	  {
 		ShowMessage("Cannot Open File "+RecordRawSaveDialog->FileName);
+		SecureLog::LogWarning("Cannot Open File " + std::string(AnsiString(RecordRawSaveDialog->FileName).c_str()));
 	  }
 	 else RawRecordButton->Caption="Stop Raw Recording";
 	}
@@ -1301,6 +1336,7 @@ void __fastcall TForm1::RawRecordButtonClick(TObject *Sender)
    delete RecordRawStream;
    RecordRawStream=NULL;
    RawRecordButton->Caption="Raw Record";
+   SecureLog::LogInfo("finish Raw Record");
  }
 }
 //---------------------------------------------------------------------------
@@ -1311,8 +1347,11 @@ void __fastcall TForm1::RawPlaybackButtonClick(TObject *Sender)
   if (PlaybackRawDialog->Execute())
    {
 	// First, check if the file exists.
-	if (!FileExists(PlaybackRawDialog->FileName))
+	if (!FileExists(PlaybackRawDialog->FileName)) {
 	  ShowMessage("File "+PlaybackRawDialog->FileName+" does not exist");
+	  std::string msg = "File " + std::string(AnsiString(PlaybackRawDialog->FileName).c_str()) + " does not exist";
+	  SecureLog::LogWarning(msg);
+    }
 	else
 	{
 		// Open a file for writing. Creates the file if it doesn't exist, or overwrites it if it does.
@@ -1320,10 +1359,13 @@ void __fastcall TForm1::RawPlaybackButtonClick(TObject *Sender)
 	if (PlayBackRawStream==NULL)
 	  {
 		ShowMessage("Cannot Open File "+PlaybackRawDialog->FileName);
+		SecureLog::LogWarning("Cannot Open File " + std::string(AnsiString(PlaybackRawDialog->FileName).c_str()));
 	  }
 	 else {
+           SecureLog::LogInfo("start Raw Playback");
 		   TCPClientRawHandleThread = new TTCPClientRawHandleThread(true);
 		   TCPClientRawHandleThread->UseFileInsteadOfNetwork=true;
+	       TCPClientRawHandleThread->UseTLS=false;
 		   TCPClientRawHandleThread->First=true;
 		   TCPClientRawHandleThread->FreeOnTerminate=TRUE;
 		   TCPClientRawHandleThread->Resume();
@@ -1340,6 +1382,7 @@ void __fastcall TForm1::RawPlaybackButtonClick(TObject *Sender)
    PlayBackRawStream=NULL;
    RawPlaybackButton->Caption="Raw Playback";
    RawConnectButton->Enabled=true;
+   SecureLog::LogInfo("finish Raw Playback");
  }
 }
 //---------------------------------------------------------------------------
@@ -1361,7 +1404,24 @@ void __fastcall TTCPClientRawHandleThread::Execute(void)
   __int64 Time,SleepTime;
   while (!Terminated)
   {
-	if (!UseFileInsteadOfNetwork)
+	if (UseTLS) {
+	   try {
+            printf("Call TLS SSectionRAW  READ()");
+			if (!Form1->TLSSessionRAW->IsConnected()) {
+			    SecureLog::LogWarning("TTCPClientRawHandleThread::disconnected");
+				Terminate();
+			}
+			StringMsgBuffer=Form1->TLSSessionRAW->Read();
+			if (StringMsgBuffer.IsEmpty()) {
+			  SecureLog::LogWarning("TTCPClientRawHandleThread::received empty");
+				Terminate();
+			}
+	   } catch (...) {
+		 TThread::Synchronize(StopTCPClient);
+		 break;
+	   }
+	}
+	else if (!UseFileInsteadOfNetwork)
 	 {
 	  try {
 		   if (!Form1->IdTCPClientRaw->Connected()) Terminate();
@@ -1403,7 +1463,8 @@ void __fastcall TTCPClientRawHandleThread::Execute(void)
       }
 	 catch (...)
      {
-      ShowMessage("TTCPClientRawHandleThread::Execute Exception 3");
+	  ShowMessage("TTCPClientRawHandleThread::Execute Exception 3");
+	  SecureLog::LogError("TTCPClientRawHandleThread::Execute Exception 3");
 	 }
   }
 }
@@ -1430,11 +1491,15 @@ void __fastcall TForm1::SBSConnectButtonClick(TObject *Sender)
 
  if ((SBSConnectButton->Caption=="SBS Connect") && (Sender!=NULL))
  {
+  if(IdTCPClientSBS->Host == "data.adsbhub.org" || IdTCPClientSBS->Host == "128.237.96.41") {
   try
    {
+
    IdTCPClientSBS->Connect();
+   SecureLog::LogInfo("connect with SBS Server");
    TCPClientSBSHandleThread = new TTCPClientSBSHandleThread(true);
    TCPClientSBSHandleThread->UseFileInsteadOfNetwork=false;
+   TCPClientSBSHandleThread->UseTLS = false;
    TCPClientSBSHandleThread->FreeOnTerminate=TRUE;
    TCPClientSBSHandleThread->Resume();
    }
@@ -1442,12 +1507,38 @@ void __fastcall TForm1::SBSConnectButtonClick(TObject *Sender)
    {
 	ShowMessage("Error while connecting: "+e.Message);
    }
+  } else {
+    try
+   {
+	//TLSSessionSBS->Connect(SBSIpAddress->Text, 5002);
+	TLSSessionSBS->Connect("192.168.43.3", 30004);
+	TCPClientSBSHandleThread = new TTCPClientSBSHandleThread(true);
+	TCPClientSBSHandleThread->UseFileInsteadOfNetwork=false;
+	TCPClientSBSHandleThread->UseTLS = true;
+	TCPClientSBSHandleThread->FreeOnTerminate=TRUE;
+	TCPClientSBSHandleThread->Resume();
+	SBSConnectButton->Caption="SBS Disconnect";
+    SBSPlaybackButton->Enabled=false;
+    }
+   catch (const EIdException& e)
+   {
+	ShowMessage("Error while connecting with TLS: "+e.Message);
+	std::string msg = "Error while connecting with TLS: " + std::string(AnsiString(e.Message).c_str());
+	SecureLog::LogError(msg);
+   }
+  }
  }
  else
   {
 	TCPClientSBSHandleThread->Terminate();
-	IdTCPClientSBS->Disconnect();
-    IdTCPClientSBS->IOHandler->InputBuffer->Clear();
+	SecureLog::LogInfo("disconnect with SBS Server");
+	if(IdTCPClientSBS->Host == "data.adsbhub.org" || IdTCPClientSBS->Host == "128.237.96.41")
+	{
+		IdTCPClientSBS->Disconnect();
+		IdTCPClientSBS->IOHandler->InputBuffer->Clear();
+	} else {
+        TLSSessionSBS->Disconnect();
+    }
 	SBSConnectButton->Caption="SBS Connect";
 	SBSPlaybackButton->Enabled=true;
   }
@@ -1466,12 +1557,13 @@ void __fastcall TTCPClientSBSHandleThread::HandleInput(void)
    __int64 CurrentTime;
    CurrentTime=GetCurrentTimeInMsec();
    Form1->RecordSBSStream->WriteLine(IntToStr(CurrentTime));
+   StringMsgBuffer = Form1->encryption->Encrypt(StringMsgBuffer);
    Form1->RecordSBSStream->WriteLine(StringMsgBuffer);
   }
 
   if (Form1->BigQueryCSV)
   {
-    //printf("[BigQuery] %s\n", StringMsgBuffer.c_str());
+	StringMsgBuffer = Form1->encryption->Encrypt(StringMsgBuffer);
     Form1->BigQueryCSV->WriteLine(StringMsgBuffer);
     Form1->BigQueryRowCount++;
 	if (Form1->BigQueryRowCount>=BIG_QUERY_UPLOAD_COUNT)
@@ -1504,7 +1596,25 @@ void __fastcall TTCPClientSBSHandleThread::Execute(void)
   __int64 Time,SleepTime;
   while (!Terminated)
   {
-	if (!UseFileInsteadOfNetwork)
+
+	 if (UseTLS) {
+	   try {
+		   printf("call Form1->TLSSessionSBS->Read()\n");
+		   if (!Form1->TLSSessionSBS->IsConnected()) {
+				SecureLog::LogWarning("TTCPClientSBSHandleThread::disconnected");
+				Terminate();
+		   }
+			StringMsgBuffer=Form1->TLSSessionSBS->Read();
+			if (StringMsgBuffer.IsEmpty()) {
+				SecureLog::LogWarning("TTCPClientSBSHandleThread::received empty");
+				Terminate();
+			}
+	   } catch (...) {
+		 TThread::Synchronize(StopTCPClient);
+		 break;
+	   }
+
+	 } else if (!UseFileInsteadOfNetwork)
 	 {
 	  try {
 		   if (!Form1->IdTCPClientSBS->Connected()) Terminate();
@@ -1532,6 +1642,7 @@ void __fastcall TTCPClientSBSHandleThread::Execute(void)
 		 LastTime=Time;
 		 if (SleepTime>0) Sleep(SleepTime);
 		 StringMsgBuffer= Form1->PlayBackSBSStream->ReadLine();
+		 StringMsgBuffer= Form1->encryption->Decrypt(StringMsgBuffer);
 		}
         catch (...)
 		{
@@ -1568,15 +1679,18 @@ void __fastcall TForm1::SBSRecordButtonClick(TObject *Sender)
   if (RecordSBSSaveDialog->Execute())
    {
 	// First, check if the file exists.
-	if (FileExists(RecordSBSSaveDialog->FileName))
-	  ShowMessage("File "+RecordSBSSaveDialog->FileName+"already exists. Cannot overwrite.");
-	else
+	if (FileExists(RecordSBSSaveDialog->FileName)) {
+		ShowMessage("File "+RecordSBSSaveDialog->FileName+"already exists. Cannot overwrite.");
+		SecureLog::LogWarning(std::string(("File " + AnsiString(RecordSBSSaveDialog->FileName) + " already exists. Cannot overwrite.").c_str()));
+	}else
 	{
 		// Open a file for writing. Creates the file if it doesn't exist, or overwrites it if it does.
+	SecureLog::LogInfo("start SBS Record");
 	RecordSBSStream= new TStreamWriter(RecordSBSSaveDialog->FileName, false);
 	if (RecordSBSStream==NULL)
 	  {
 		ShowMessage("Cannot Open File "+RecordSBSSaveDialog->FileName);
+		SecureLog::LogError(std::string(("Cannot Open File " + AnsiString(RecordSBSSaveDialog->FileName)).c_str()));
 	  }
 	 else SBSRecordButton->Caption="Stop SBS Recording";
 	}
@@ -1587,6 +1701,7 @@ void __fastcall TForm1::SBSRecordButtonClick(TObject *Sender)
    delete RecordSBSStream;
    RecordSBSStream=NULL;
    SBSRecordButton->Caption="SBS Record";
+   SecureLog::LogInfo("finish SBS Record");
  }
 
 }
@@ -1609,8 +1724,10 @@ void __fastcall TForm1::SBSPlaybackButtonClick(TObject *Sender)
 		ShowMessage("Cannot Open File "+PlaybackSBSDialog->FileName);
 	  }
 	 else {
+ 			SecureLog::LogInfo("start SBS Playback");
 		   TCPClientSBSHandleThread = new TTCPClientSBSHandleThread(true);
 		   TCPClientSBSHandleThread->UseFileInsteadOfNetwork=true;
+		   TCPClientSBSHandleThread->UseTLS=false;
 		   TCPClientSBSHandleThread->First=true;
 		   TCPClientSBSHandleThread->FreeOnTerminate=TRUE;
 		   TCPClientSBSHandleThread->Resume();
@@ -1627,6 +1744,7 @@ void __fastcall TForm1::SBSPlaybackButtonClick(TObject *Sender)
    PlayBackSBSStream=NULL;
    SBSPlaybackButton->Caption="SBS Playback";
    SBSConnectButton->Enabled=true;
+   SecureLog::LogInfo("finish SBS Playback");
  }
 
 }
@@ -1638,6 +1756,7 @@ void __fastcall TForm1::IdTCPClientSBSConnected(TObject *Sender)
    IdTCPClientSBS->Socket->Binding->SetKeepAliveValues(true,60*1000,15*1000);
    SBSConnectButton->Caption="SBS Disconnect";
    SBSPlaybackButton->Enabled=false;
+   SecureLog::LogInfo("connected SBS server");
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::IdTCPClientSBSDisconnected(TObject *Sender)
@@ -1776,12 +1895,13 @@ void __fastcall TForm1::MapComboBoxChange(TObject *Sender)
 void __fastcall TForm1::BigQueryCheckBoxClick(TObject *Sender)
 {
  if (BigQueryCheckBox->State==cbChecked) {
-        printf("%s\n","check bigQuery checkbox");
- 		CreateBigQueryCSV();
+		CreateBigQueryCSV();
+		SecureLog::LogInfo("Enable BigQueryCheckBox");
  }
  else {
 	   CloseBigQueryCSV();
 	   RunPythonScript(BigQueryPythonScript,BigQueryPath+" "+BigQueryCSVFileName);
+	   SecureLog::LogInfo("Disable BigQueryCheckBox");
 	  }
 }
 //---------------------------------------------------------------------------
@@ -1795,10 +1915,16 @@ void __fastcall TForm1::CreateBigQueryCSV(void)
     if (BigQueryCSV==NULL)
 	  {
 		ShowMessage("Cannot Open BigQuery CSV File "+HomeDir+"..\\BigQuery\\"+BigQueryCSVFileName);
-        BigQueryCheckBox->State=cbUnchecked;
+		std::string msg = "Cannot Open BigQuery CSV File " +
+				  std::string(AnsiString(HomeDir).c_str()) +
+                  "..\\BigQuery\\" +
+				  std::string(AnsiString(BigQueryCSVFileName).c_str());
+		SecureLog::LogError(msg);
+		BigQueryCheckBox->State=cbUnchecked;
 	  }
-	AnsiString Header=AnsiString("Message Type,Transmission Type,SessionID,AircraftID,HexIdent,FlightID,Date_MSG_Generated,Time_MSG_Generated,Date_MSG_Logged,Time_MSG_Logged,Callsign,Altitude,GroundSpeed,Track,Latitude,Longitude,VerticalRate,Squawk,Alert,Emergency,SPI,IsOnGround");
-    printf("query: %s\n","aaa");
+	AnsiString Header=AnsiString("Message");
+//	AnsiString Header=AnsiString("Message Type,Transmission Type,SessionID,AircraftID,HexIdent,FlightID,Date_MSG_Generated,Time_MSG_Generated,Date_MSG_Logged,Time_MSG_Logged,Callsign,Altitude,GroundSpeed,Track,Latitude,Longitude,VerticalRate,Squawk,Alert,Emergency,SPI,IsOnGround");
+
 	BigQueryCSV->WriteLine(Header);
 }
 //--------------------------------------------------------------------------

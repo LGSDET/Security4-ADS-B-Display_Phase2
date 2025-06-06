@@ -23,6 +23,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     if (failedAttempts >= 5)
     {
         ShowMessage(L"5 times this password is incorrect! Login blocked.");
+		SecureLog::LogError("5 times this password is incorrect! Login blocked.");
         return;
     }
 
@@ -32,6 +33,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     if (!hInternet)
     {
         ShowMessage(L"InternetOpen Failure!");
+		SecureLog::LogWarning("InternetOpen Failure!");
         return;
     }
 
@@ -43,7 +45,8 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         INTERNET_SERVICE_HTTP, 0, 0);
     if (!hConnect)
     {
-        ShowMessage(L"InternetConnect Failure!");
+        ShowMessage(L"InternetConnect Failure!!");
+		SecureLog::LogWarning("InternetOpen Failure!!");
         InternetCloseHandle(hInternet);
         return;
     }
@@ -54,7 +57,8 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
     if (!hRequest)
     {
-        ShowMessage(L"HttpOpenRequest Failure!");
+        ShowMessage(L"HttpOpenRequest Failure!!!");
+		SecureLog::LogWarning("InternetOpen Failure!!!");
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
         return;
@@ -66,6 +70,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     if (!HttpAddRequestHeaders(hRequest, headers, -1, HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE))
     {
         ShowMessage(L"HttpAddRequestHeaders Failure!");
+		SecureLog::LogWarning("InternetOpen Failure!!!!");
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
@@ -77,6 +82,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     if (!HttpSendRequestA(hRequest, NULL, 0, (LPVOID)jsonData.c_str(), jsonData.Length()))
     {
         ShowMessage(L"HttpSendRequest Failure!");
+		SecureLog::LogWarning("InternetOpen Failure!!!!!");
         InternetCloseHandle(hRequest);
         InternetCloseHandle(hConnect);
         InternetCloseHandle(hInternet);
@@ -115,12 +121,14 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
             {
                 failedAttempts++;
                 ShowMessage(L"Wrong Password.");
+				SecureLog::LogWarning("Input Wrong Password.");
                 edtPassword->Clear();
                 edtPassword->SetFocus();
 
                 if (failedAttempts >= 5)
                 {
                     ShowMessage(L"5 times this password is incorrect! Login blocked..");
+	            	SecureLog::LogError("5 times this password is incorrect! Login blocked..");
                 }
             }
             delete json;
@@ -128,6 +136,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         else
         {
             ShowMessage(L"JSON Parse Error");
+            SecureLog::LogError("JSON Parse Error");
         }
     }
     catch (const Exception &e)

@@ -224,6 +224,10 @@
             <DependentOn>CPA.h</DependentOn>
             <BuildOrder>37</BuildOrder>
         </CppCompile>
+        <CppCompile Include="CryptoLoader.cpp">
+            <DependentOn>CryptoLoader.h</DependentOn>
+            <BuildOrder>44</BuildOrder>
+        </CppCompile>
         <CppCompile Include="DecodeRawADS_B.cpp">
             <DependentOn>DecodeRawADS_B.h</DependentOn>
             <BuildOrder>35</BuildOrder>
@@ -237,6 +241,10 @@
         <None Include="dms.h">
             <BuildOrder>36</BuildOrder>
         </None>
+        <CppCompile Include="Encryptor.cpp">
+            <DependentOn>Encryptor.h</DependentOn>
+            <BuildOrder>43</BuildOrder>
+        </CppCompile>
         <CppCompile Include="LatLonConv.cpp">
             <DependentOn>LatLonConv.h</DependentOn>
             <BuildOrder>33</BuildOrder>
@@ -345,6 +353,10 @@
             <DependentOn>SBS_Message.h</DependentOn>
             <BuildOrder>40</BuildOrder>
         </CppCompile>
+        <CppCompile Include="SecureLog.cpp">
+            <DependentOn>SecureLog.h</DependentOn>
+            <BuildOrder>45</BuildOrder>
+        </CppCompile>
         <None Include="stb_image.h">
             <BuildOrder>37</BuildOrder>
         </None>
@@ -352,11 +364,18 @@
             <DependentOn>TimeFunctions.h</DependentOn>
             <BuildOrder>38</BuildOrder>
         </CppCompile>
+        <CppCompile Include="TLSSession.cpp">
+            <DependentOn>TLSSession.h</DependentOn>
+            <BuildOrder>42</BuildOrder>
+        </CppCompile>
         <CppCompile Include="TriangulatPoly.cpp">
             <DependentOn>TriangulatPoly.h</DependentOn>
             <BuildOrder>32</BuildOrder>
         </CppCompile>
-        <FormResources Include="checkPassword.dfm"/>
+        <CppCompile Include="Util.cpp">
+            <DependentOn>Util.h</DependentOn>
+            <BuildOrder>46</BuildOrder>
+        </CppCompile>
         <FormResources Include="DisplayGUI.dfm"/>
         <FormResources Include="AreaDialog.dfm"/>
         <BuildConfiguration Include="Base">

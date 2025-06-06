@@ -7,6 +7,7 @@
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
+#include "SecureLog.h"
 //---------------------------------------------------------------------------
 class TFormPassword : public TForm
 {

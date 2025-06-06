@@ -48,16 +48,17 @@ client = bigquery.Client()
 
 
 # Set table_id to the ID of the table.
-table_id = "scs-lg-sec-4.SBS_Data.FirstRun"
+table_id = "scs-lg-sec-4.SBS_Data.FirstRun2"
 
 
 job_config = bigquery.LoadJobConfig(
     source_format=bigquery.SourceFormat.CSV,
-    autodetect=True,
+    autodetect=False,
     skip_leading_rows=1,
     write_disposition=bigquery.WriteDisposition.WRITE_APPEND,   #add this line to append rows vice creating a new table or overwriting data
-
+    schema=[bigquery.SchemaField("Message", "STRING")],
 )
+
 result=read_csv_file(filename)
 if result == 0:
   print(f"Success\n")
