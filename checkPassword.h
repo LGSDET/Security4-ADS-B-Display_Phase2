@@ -19,6 +19,7 @@ __published:	// IDE-managed Components
 	TLabel *flightNumber;
 	TEdit *flightNumberBox;
 	void __fastcall btnOkClick(TObject *Sender);
+    void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TFormPassword(TComponent* Owner);

@@ -1,15 +1,17 @@
 object FormPassword: TFormPassword
-  Left = 0
-  Top = 0
+  Left = 1100
+  Top = 600
   Caption = 'Protected Flight Information'
-  ClientHeight = 194
-  ClientWidth = 199
+  ClientHeight = 201
+  ClientWidth = 216
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesigned
+  OnClose = FormClose
   TextHeight = 15
   object password: TLabel
     Left = 8
@@ -19,9 +21,9 @@ object FormPassword: TFormPassword
     Caption = 'Password:'
   end
   object title: TLabel
-    Left = 8
+    Left = 25
     Top = 8
-    Width = 155
+    Width = 150
     Height = 46
     Caption = 'PROTECTED FLIGHT '#13#10'    INFORMATION'
     Font.Charset = DEFAULT_CHARSET
@@ -34,14 +36,14 @@ object FormPassword: TFormPassword
   object flightNumber: TLabel
     Left = 8
     Top = 60
-    Width = 78
+    Width = 31
     Height = 15
     Caption = 'ICAO:'
   end
   object edtPassword: TEdit
     Left = 67
     Top = 110
-    Width = 55
+    Width = 110
     Height = 23
     PasswordChar = '*'
     TabOrder = 0

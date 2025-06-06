@@ -148,3 +148,8 @@ void __fastcall TFormPassword::SetICAOText(AnsiString icao)
 {
 	flightNumberBox->Text = icao;  
 }
+
+void __fastcall TFormPassword::FormClose(TObject *Sender, TCloseAction &Action)
+{
+    failedAttempts = 0;
+}
