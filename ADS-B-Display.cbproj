@@ -377,6 +377,7 @@
             <BuildOrder>46</BuildOrder>
         </CppCompile>
         <FormResources Include="DisplayGUI.dfm"/>
+        <FormResources Include="checkPassword.dfm"/>
         <FormResources Include="AreaDialog.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
