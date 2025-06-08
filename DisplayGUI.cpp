@@ -1298,7 +1298,7 @@ void __fastcall TForm1::IdTCPClientRawConnected(TObject *Sender)
    IdTCPClientRaw->Socket->Binding->SetKeepAliveValues(true,60*1000,15*1000);
    RawConnectButton->Caption="Raw Disconnect";
    RawPlaybackButton->Enabled=false;
-   SecureLog::LogInfo("disconnect with Raw Server");
+   SecureLog::LogInfo("try to connect with Raw Server");
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::IdTCPClientRawDisconnected(TObject *Sender)
@@ -1756,7 +1756,7 @@ void __fastcall TForm1::IdTCPClientSBSConnected(TObject *Sender)
    IdTCPClientSBS->Socket->Binding->SetKeepAliveValues(true,60*1000,15*1000);
    SBSConnectButton->Caption="SBS Disconnect";
    SBSPlaybackButton->Enabled=false;
-   SecureLog::LogInfo("connected SBS server");
+   SecureLog::LogInfo("try to connect SBS server");
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::IdTCPClientSBSDisconnected(TObject *Sender)
