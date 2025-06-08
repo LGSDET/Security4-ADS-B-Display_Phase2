@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 
 #include <vcl.h>
 #include <new>
@@ -1599,7 +1599,6 @@ void __fastcall TTCPClientSBSHandleThread::Execute(void)
 
 	 if (UseTLS) {
 	   try {
-		   printf("call Form1->TLSSessionSBS->Read()\n");
 		   if (!Form1->TLSSessionSBS->IsConnected()) {
 				SecureLog::LogWarning("TTCPClientSBSHandleThread::disconnected");
 				Terminate();

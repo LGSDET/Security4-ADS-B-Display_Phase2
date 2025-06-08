@@ -101,8 +101,8 @@ bool TLSSession::Connect(const AnsiString& ip, int port) {
 
 	if (!initialized) return false;
 
-    AnsiString msg = "try to connect with IP=" + ip + ", Port=" + IntToStr(port);
-    SecureLog::LogInfo(std::string(msg.c_str()));
+	AnsiString msg = "try to connect with IP=" + ip + ", Port=" + IntToStr(port);
+	SecureLog::LogInfo(std::string(msg.c_str()));
     // WinSock 초기화
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -167,7 +167,6 @@ bool TLSSession::Connect(const AnsiString& ip, int port) {
 AnsiString TLSSession::Read() {
    Lock->Acquire();
    try {
- printf("Start Read with TLS\n");
 		char buf[2048] = {0};
 		int bytes = loader.SSL_read(ssl, buf, sizeof(buf) - 1);
 		if (bytes > 0) {
@@ -216,8 +215,6 @@ bool TLSSession::Write(const AnsiString& data) {
 }
 
 void TLSSession::Disconnect() {
-	printf("Start Disconnect with TLS\n");
-
     if (ssl) {
 		int ret = loader.SSL_shutdown(ssl);
 		if (ret < 0) {
