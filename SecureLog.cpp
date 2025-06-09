@@ -93,12 +93,20 @@ std::string SecureLog::ToHex(const std::vector<uint8_t>& data) {
 
 void SecureLog::InitKey() {
 	if (keyInitialized) return;
-	std::string salt = "MySalt1234567890";  // 보안 강화를 위한 고정된 salt
+	std::string salt = "MySalt1234567890";
 	hmacKey = DeriveKeyFromMac(salt);
 	if (hmacKey.size() < 32) {
-		MessageBox(nullptr, _T("키 파일이 너무 짧습니다 (32바이트 필요)"), _T("Error"), MB_OK | MB_ICONERROR);
+        std::hash<std::string> hasher;
+        size_t hashVal = hasher(std::string(hmacKey.begin(), hmacKey.end()));
+
+        while (hmacKey.size() < 32) {
+            uint8_t byte = static_cast<uint8_t>(
+                (hashVal >> ((hmacKey.size() % sizeof(size_t)) * 8)) & 0xFF);
+            hmacKey.push_back(byte);
+        }
+    } else if (hmacKey.size() > 32) {
+        hmacKey.resize(32);
     }
-	hmacKey.resize(32);  // AES-128
 	keyInitialized = true;
 }
 

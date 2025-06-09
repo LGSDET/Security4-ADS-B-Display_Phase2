@@ -200,10 +200,12 @@ __fastcall TForm1::TForm1(TComponent* Owner)
  BigQueryFileCount=0;
  SecureLog::LogInfo("프로그램이 시작되었습니다.");
  if (!OpenSSLLoader::Instance().Load()) {
+	  printf("Openssl loader Failed\n");
 	  throw Sysutils::Exception("openssl loader Failed");
  }
  if (!CryptoLoader::Instance().Load()) {
-	  throw Sysutils::Exception("CryptoLoader loader Failed");
+      printf("Crypto loader Failed\n");
+	  throw Sysutils::Exception("Crypto loader Failed");
  }
 
  TLSSessionSBS = new TLSSession();

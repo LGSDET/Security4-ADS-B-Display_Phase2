@@ -16,10 +16,18 @@ Encryptor::Encryptor() : loader(CryptoLoader::Instance())
     std::string salt = "MySalt123";  // 보안 강화를 위한 고정된 salt
     keyBytes = DeriveKeyFromMac(salt);
 
-	if (keyBytes.size() < 16) {
-		MessageBox(nullptr, _T("키 파일이 너무 짧습니다 (32바이트 필요)"), _T("Error"), MB_OK | MB_ICONERROR);
+    if (keyBytes.size() < 16) {
+        std::hash<std::string> hasher;
+        size_t hashVal = hasher(std::string(keyBytes.begin(), keyBytes.end()));
+
+        while (keyBytes.size() < 16) {
+            uint8_t byte = static_cast<uint8_t>(
+                (hashVal >> ((keyBytes.size() % sizeof(size_t)) * 8)) & 0xFF);
+            keyBytes.push_back(byte);
+        }
+    } else if (keyBytes.size() > 16) {
+        keyBytes.resize(16);  // 필요시 자름
     }
-	keyBytes.resize(16);  // AES-128
 }
 
 std::vector<uint8_t> Encryptor::DeriveKeyFromMac(const std::string& salt) {
@@ -48,7 +56,10 @@ AnsiString Encryptor::Encrypt(const AnsiString& plainText) {
 
 	std::vector<uint8_t> cipherText(plainText.Length() + 16);
 	EVP_CIPHER_CTX* ctx = loader.EVP_CIPHER_CTX_new();
-    if (!ctx) throw std::runtime_error("Failed to create EVP_CIPHER_CTX");
+	if (!ctx) {
+		SecureLog::LogWarning("Failed to create EVP_CIPHER_CTX");
+		return "";
+	}
 
 	loader.EVP_EncryptInit_ex(ctx, loader.EVP_aes_128_gcm(), nullptr, nullptr, nullptr);
 	loader.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv_len, nullptr);
@@ -80,7 +91,7 @@ AnsiString Encryptor::Decrypt(const AnsiString& encryptedBase64) {
 
 	if (combined.size() < (12 + 16)) {
 		printf("Invalid encrypted data");
-        return "";
+		return "";
 	}
 
     const size_t iv_len = 12;
@@ -93,7 +104,10 @@ AnsiString Encryptor::Decrypt(const AnsiString& encryptedBase64) {
 	std::vector<uint8_t> plainText(cipherBytes.size());
 
 	EVP_CIPHER_CTX* ctx = loader.EVP_CIPHER_CTX_new();
-	if (!ctx) throw std::runtime_error("Failed to create EVP_CIPHER_CTX");
+	if (!ctx) {
+		SecureLog::LogWarning("Failed to create EVP_CIPHER_CTX");
+        return "";
+	}
 
 	loader.EVP_DecryptInit_ex(ctx, loader.EVP_aes_128_gcm(), nullptr, nullptr, nullptr);
 	loader.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv.size(), nullptr);
