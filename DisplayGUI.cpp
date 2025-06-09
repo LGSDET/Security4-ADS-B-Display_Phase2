@@ -198,7 +198,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
  BigQueryCSV=NULL;
  BigQueryRowCount=0;
  BigQueryFileCount=0;
- SecureLog::LogInfo("프로그램이 시작되었습니다.");
+ SecureLog::LogInfo("프로그램이 시작되었습니다. Version : 1.0 ");
  if (!OpenSSLLoader::Instance().Load()) {
 	  printf("Openssl loader Failed\n");
 	  throw Sysutils::Exception("openssl loader Failed");
