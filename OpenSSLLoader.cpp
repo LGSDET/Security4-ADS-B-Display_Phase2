@@ -42,16 +42,17 @@ bool OpenSSLLoader::Load() {
     SSL_free = (decltype(SSL_free))GetProcAddress(hModule, "SSL_free");
     SSL_CTX_set_ciphersuites = (decltype(SSL_CTX_set_ciphersuites))GetProcAddress(hModule, "SSL_CTX_set_ciphersuites");
     SSL_get_error = (decltype(SSL_get_error))GetProcAddress(hModule, "SSL_get_error");
-    SSL_get_fd = (decltype(SSL_get_fd))GetProcAddress(hModule, "SSL_get_fd");
-    SSL_is_init_finished = (decltype(SSL_is_init_finished))GetProcAddress(hModule, "SSL_is_init_finished");
+	SSL_get_fd = (decltype(SSL_get_fd))GetProcAddress(hModule, "SSL_get_fd");
+	SSL_is_init_finished = (decltype(SSL_is_init_finished))GetProcAddress(hModule, "SSL_is_init_finished");
 	SSL_write = (decltype(SSL_write))GetProcAddress(hModule, "SSL_write");
-
-    // 로딩 확인
+	SSL_CTX_set_options =  (decltype(SSL_CTX_set_options))GetProcAddress(hModule, "SSL_CTX_set_options");
+	SSL_CTX_set_cipher_list =  (decltype(SSL_CTX_set_cipher_list))GetProcAddress(hModule, "SSL_CTX_set_cipher_list");
+	// 로딩 확인
     if (!OPENSSL_init_ssl || !SSL_CTX_new || !SSL_CTX_free || !TLS_client_method ||
         !SSL_CTX_load_verify_locations || !SSL_CTX_use_certificate_file || !SSL_CTX_use_PrivateKey_file ||
         !SSL_CTX_check_private_key || !SSL_CTX_set_verify || !SSL_new || !SSL_set_fd ||
         !SSL_connect || !SSL_read || !SSL_shutdown || !SSL_free || !SSL_CTX_set_ciphersuites ||
-		!SSL_get_error || !SSL_get_fd || !SSL_is_init_finished || !SSL_write) {
+		!SSL_get_error || !SSL_get_fd || !SSL_is_init_finished || !SSL_write || !SSL_CTX_set_options || !SSL_CTX_set_cipher_list) {
         printf("check openssl loading failed\n");
         Unload();
         return false;
@@ -67,13 +68,13 @@ void OpenSSLLoader::Unload() {
 
         OPENSSL_init_ssl = nullptr;
         SSL_CTX_new = nullptr;
-        SSL_CTX_free = nullptr;
+		SSL_CTX_free = nullptr;
         TLS_client_method = nullptr;
         SSL_CTX_load_verify_locations = nullptr;
         SSL_CTX_use_certificate_file = nullptr;
         SSL_CTX_use_PrivateKey_file = nullptr;
         SSL_CTX_check_private_key = nullptr;
-        SSL_CTX_set_verify = nullptr;
+		SSL_CTX_set_verify = nullptr;
         SSL_new = nullptr;
         SSL_set_fd = nullptr;
         SSL_connect = nullptr;
@@ -85,5 +86,8 @@ void OpenSSLLoader::Unload() {
         SSL_get_fd = nullptr;
         SSL_is_init_finished = nullptr;
 		SSL_write = nullptr;
+		SSL_CTX_set_options = nullptr;
+		SSL_CTX_set_cipher_list = nullptr;
+
     }
 }

@@ -50,6 +50,8 @@ bool TLSSession::Init() {
         return false;
     }
 
+  //	loader.SSL_CTX_set_min_proto_version(ssl_ctx, TLS1_2_VERSION);
+
 	const char* caCert = "lgess2025s4rpicert.pem";
 	const char* clientCert = "lgess2025s4clientcert.pem";
 	const char* clientKey = "lgess2025s4clientkey.pem";
@@ -86,13 +88,33 @@ bool TLSSession::Init() {
 		loader.SSL_CTX_free(ssl_ctx);
 		ssl_ctx = nullptr;
         return false;
-    }
+	}
 
-    // 7. 서버 인증서 검증 모드 설정
-    loader.SSL_CTX_set_verify(ssl_ctx, SSL_VERIFY_PEER, nullptr);
+	// 7. 서버 인증서 검증 모드 설정
+	loader.SSL_CTX_set_verify(ssl_ctx, SSL_VERIFY_PEER, nullptr);
+
+	const char* tls13Ciphers = "TLS_AES_256_GCM_SHA384";
+    if (!loader.SSL_CTX_set_ciphersuites(ssl_ctx, tls13Ciphers)) {
+		MessageBox(nullptr, _T("TLS 1.3 cipher 설정 실패"), _T("Error"), MB_OK | MB_ICONERROR);
+		SecureLog::LogError("TLS 1.3 cipher 설정 실패");
+		loader.SSL_CTX_free(ssl_ctx);
+		ssl_ctx = nullptr;
+		return false;
+	}
+
+	if (!loader.SSL_CTX_set_cipher_list(ssl_ctx, "ECDHE-RSA-AES128-GCM-SHA256")) {
+		MessageBox(nullptr, _T("TLS 1.2 cipher 설정 실패"), _T("Error"), MB_OK | MB_ICONERROR);
+		SecureLog::LogError("TLS 1.2 cipher 설정 실패");
+		loader.SSL_CTX_free(ssl_ctx);
+		ssl_ctx = nullptr;
+		return false;
+	}
+
+    loader.SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_TICKET);
+
 	initialized = true;
 	//MessageBox(nullptr, _T("OpenSSL 초기화 및 인증서 설정 완료"), _T("Info"), MB_OK | MB_ICONINFORMATION);
-    SecureLog::LogInfo("OpenSSL 초기화 및 인증서 설정 완료");
+	SecureLog::LogInfo("OpenSSL 초기화 및 인증서 설정 완료");
 	return true;
 
 }
@@ -118,6 +140,9 @@ bool TLSSession::Connect(const AnsiString& ip, int port) {
 		return 1;
 	}
 
+    int size = 5 * 1024 * 1024;
+	setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char*)&size, sizeof(size));
+
     sockaddr_in serverAddr = {};
     serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(port);
@@ -133,9 +158,10 @@ bool TLSSession::Connect(const AnsiString& ip, int port) {
 
     // SSL 객체 생성 및 핸드셰이크
 	ssl = loader.SSL_new(ssl_ctx);
- //   if (!loader.SSL_CTX_set_ciphersuites(g_ssl_ctx, "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384")) {
-//        std::cerr << "TLS Cipher Suites 설정 실패\n";
-//    }
+
+	long disableOldTLS = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1;
+	loader.SSL_CTX_set_options(ssl_ctx, disableOldTLS);
+
 	loader.SSL_set_fd(ssl, (int)sock);
 
 	if (loader.SSL_connect(ssl) != 1) {
