@@ -90,7 +90,7 @@ AnsiString Encryptor::Decrypt(const AnsiString& encryptedBase64) {
 	std::vector<uint8_t> combined = Base64Decode(encryptedBase64);
 
 	if (combined.size() < (12 + 16)) {
-		printf("Invalid encrypted data");
+		SecureLog::LogWarning("Invalid encrypted data");
 		return "";
 	}
 
@@ -119,7 +119,6 @@ AnsiString Encryptor::Decrypt(const AnsiString& encryptedBase64) {
 
 	loader.EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, tag.size(), (void*)tag.data());
 	if (loader.EVP_DecryptFinal_ex(ctx, plainText.data() + len, &len) <= 0) {
-		printf("Decryption failed or tag mismatch");
 		SecureLog::LogWarning("Decryption failed or tag mismatch");
         return "";
 	}
