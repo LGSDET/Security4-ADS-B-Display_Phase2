@@ -4,49 +4,82 @@
 
 #include "Util.h"
 #include <System.hpp>
-#include <IdCoderMIME.hpp>
-#include <IdGlobal.hpp>
+#include <vector>
+#include <unordered_map>
 #include <iphlpapi.h>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma comment(lib, "iphlpapi.lib")
 
 AnsiString Base64Encode(const std::vector<uint8_t>& data) {
-    TIdBytes idBytes;
+    const char* base64_chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    // Resize TIdBytes to match input vector size
-    idBytes.Length = static_cast<int>(data.size());
+    AnsiString encoded;
+    size_t i = 0;
 
-    // Copy data from std::vector to TIdBytes
-    for (int i = 0; i < static_cast<int>(data.size()); ++i) {
-        idBytes[i] = data[i];
+    while (i < data.size()) {
+        uint32_t buf = 0;
+        int padding = 0;
+
+		for (int j = 0; j < 3; ++j) {
+            buf <<= 8;
+            if (i < data.size()) {
+                buf |= data[i++];
+            } else {
+                ++padding;
+            }
+        }
+
+        for (int j = 0; j < 4 - padding; ++j) {
+            int index = (buf >> (18 - j * 6)) & 0x3F;
+            encoded += base64_chars[index];
+        }
+
+        for (int j = 0; j < padding; ++j)
+            encoded += '=';
     }
 
-    TIdEncoderMIME* encoder = new TIdEncoderMIME();
-    AnsiString result = encoder->EncodeBytes(idBytes);
-    delete encoder;
-
-    return result;
+    return encoded;
 }
 
 std::vector<uint8_t> Base64Decode(const AnsiString& base64) {
-    TIdDecoderMIME* decoder = new TIdDecoderMIME();
+    static const std::unordered_map<char, uint8_t> base64_map = [] {
+        std::unordered_map<char, uint8_t> m;
+        const char* chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        for (int i = 0; i < 64; ++i) {
+            m[chars[i]] = static_cast<uint8_t>(i);
+        }
+        return m;
+    }();
 
-    // 디코딩
-    TIdBytes idBytes = decoder->DecodeBytes(base64);
-    delete decoder;
+    std::vector<uint8_t> result;
+    uint32_t buf = 0;
+    int bits_collected = 0;
 
-    // TIdBytes → std::vector<uint8_t> 변환
-    std::vector<uint8_t> result(idBytes.Length);
-    for (int i = 0; i < idBytes.Length; ++i) {
-        result[i] = idBytes[i];
+    for (int i = 1; i <= base64.Length(); ++i) {
+        char c = base64[i];
+        if (c == '=')
+            break;
+
+        auto it = base64_map.find(c);
+		if (it == base64_map.end())
+            continue;
+
+        buf = (buf << 6) | it->second;
+        bits_collected += 6;
+
+        if (bits_collected >= 8) {
+            bits_collected -= 8;
+            result.push_back((buf >> bits_collected) & 0xFF);
+        }
     }
 
     return result;
 }
 
 std::string GetPrimaryMacAddress() {
-    IP_ADAPTER_INFO AdapterInfo[16];       // 최대 16개 어댑터
+	IP_ADAPTER_INFO AdapterInfo[16];       // 최대 16개 어댑터
     DWORD buflen = sizeof(AdapterInfo);
     DWORD status = GetAdaptersInfo(AdapterInfo, &buflen);
     if (status != ERROR_SUCCESS) return "";
@@ -57,3 +90,4 @@ std::string GetPrimaryMacAddress() {
             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return std::string(macStr);
 }
+
