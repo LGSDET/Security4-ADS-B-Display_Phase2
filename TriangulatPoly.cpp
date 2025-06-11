@@ -5,8 +5,9 @@
 
 #include "TriangulatPoly.h"
 #include <stdlib.h>
-#include <mem.h>
-#include <vcl.h>
+#include <cstring>
+//#include <mem.h>
+//#include <vcl.h>
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)

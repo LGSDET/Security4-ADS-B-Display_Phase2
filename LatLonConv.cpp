@@ -1,5 +1,6 @@
 //---------------------------------------------------------------------------
 #include "LatLonConv.h"
+#include <cmath>
 
 //---------------------------------------------------------------------------
 
@@ -239,96 +240,3 @@ TCoordConvStatus VDirect(double Latitude1,  double Longitude1,
 
   return(OKNOERROR);
 }
-//---------------------------------------------------------------------------
- static bool IsAntipodal(double Latitude1, double Latitude2,
-						 double Longitude1,double Longitude2)
- {
-   double la,lo;
-   int eflag;
-
-   eflag = Antipod(Latitude1, Longitude1, &la, &lo);  //compute antipodal values
-  if (eflag != OKNOERROR)  return(false);
-
-  if ((Latitude2 == la) && (Longitude2 == lo)) return(true);
-  else return(false);
- }
-//---------------------------------------------------------------------------
- static TCoordConvStatus Antipod(double latin,   double lonin,
-								 double *latout, double *lonout)
-{
-  //this function returns the antipod of latin, lonin in latout, lonout
-  //NOTE: angles are assumed to be in decimal degrees
-
-  //function returns:
-  //   OkNOERROR if successful and latout and lonouut contain the
-  //       antipodal values otherwise they are indeterminate. I set them
-  //       both to 9999.0 degrees.
-  //   LONGERR if abs(lonin) is > 180 degrees
-  //   LATERR if abs(latin) is > 90 degrees
-
-
-  if (fabs(lonin) > 180.0)
-	{
-	  *latout = 9999.0;
-	  *lonout = 9999.0;
-	  return(LONGERR);
-	}
-
-  if (fabs(latin) > 90.0)
-	{
-	  *latout = 9999.0;
-	  *lonout = 9999.0;
-	  return(LATERR);
-
-	}
-
-  *latout = -latin;
-  *lonout= modulus(lonin + 180.0, 180.0);
-  return(OKNOERROR);
-
-}
-//---------------------------------------------------------------------------
-#if 0
-static double modulus (double const X, double Y)
-{
- double Z,Result;
-
-  Result = X / Y;
-  Z = (int)Result;
-  if (Frac(Result) < 0.0) Z = Z - 1.0;
-  Result = X - Y * Z;
-  return(Result);
-}
-#endif
-//---------------------------------------------------------------------------
-static double modulus(double Num1, double Num2)
-{
-  return(Num1 - Num2 * floor(Num1 / Num2));
-}
-//---------------------------------------------------------------------------
-static double Frac(double Num1)
-{
- return(Num1-((int)Num1));
-}
-//---------------------------------------------------------------------------
-static double sqr(double X)
-{
- return(X*X);
-}
-//---------------------------------------------------------------------------
-static double ModAzimuth(double az)
-{
- return(modulus(az, 2.0 * M_PI));
-}
-//---------------------------------------------------------------------------
-static double ModLatitude(double lat)
-{
- return(modulus(lat + M_PI / 2.0, M_PI) - M_PI / 2.0);
-}
-//---------------------------------------------------------------------------
-static double ModLongitude(double lon)
-{
- return(modulus(lon + M_PI, 2.0 * M_PI) - M_PI);
-}
-//---------------------------------------------------------------------------
-

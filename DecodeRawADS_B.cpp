@@ -1,27 +1,30 @@
 //---------------------------------------------------------------------------
 
 #pragma hdrstop
-#include <vcl.h>
+//#include <vcl.h>
 #include "DecodeRawADS_B.h"
-#include "DisplayGUI.h"
+//#include "DisplayGUI.h"
 #include <cstring>
 #include <string.h>
-
+#include <cmath>
+#include <ctime>
+using std::hypot;
+using std::atan2;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 static int hex_digit_val (int c);
-static int decode_modeS_message (modeS_message *mm, const uint8_t *_msg);
+int decode_modeS_message (modeS_message *mm, const uint8_t *_msg);
 static int modeS_message_len_by_type (int type);
 static uint32_t CRC_get (const uint8_t *msg, int bits);
-static uint32_t CRC_check (const uint8_t *msg, int bits);
-static int fix_two_bits_errors (uint8_t *msg, int bits);
-static int fix_single_bit_errors (uint8_t *msg, int bits);
-static bool brute_force_AP (const uint8_t *msg, modeS_message *mm);
-static int decode_AC12_field (uint8_t *msg, metric_unit_t *unit);
-static int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit);
-static uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2);
+uint32_t CRC_check (const uint8_t *msg, int bits);
+int fix_two_bits_errors (uint8_t *msg, int bits);
+int fix_single_bit_errors (uint8_t *msg, int bits);
+bool brute_force_AP (const uint8_t *msg, modeS_message *mm);
+int decode_AC12_field (uint8_t *msg, metric_unit_t *unit);
+int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit);
+uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2);
 static void ICAO_cache_add_address (uint32_t addr);
-static bool ICAO_address_recently_seen (uint32_t addr);
+bool ICAO_address_recently_seen (uint32_t addr);
 static uint32_t ICAO_cache_hash_address (uint32_t a);
 
 
@@ -108,7 +111,7 @@ static void ICAO_cache_add_address (uint32_t addr)
  * `MODES_ICAO_CACHE_TTL` seconds ago.
  * Otherwise returns false.
  */
-static bool ICAO_address_recently_seen (uint32_t addr)
+bool ICAO_address_recently_seen (uint32_t addr)
 {
   uint32_t h_idx = ICAO_cache_hash_address (addr);
   uint32_t _addr = ICAO_cache [2*h_idx];
@@ -120,7 +123,7 @@ static bool ICAO_address_recently_seen (uint32_t addr)
 /**
  * Convert 24-bit big-endian (network order) to host order format.
  */
-static uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2)
+uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2)
 {
   return ((a0 << 16) | (a1 << 8) | a2);
 }
@@ -143,7 +146,7 @@ static uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2)
  * \retval true   successfully recovered a message with a correct checksum.
  * \retval false  failed to recover a message with a correct checksum.
  */
-static bool brute_force_AP (const uint8_t *msg, modeS_message *mm)
+bool brute_force_AP (const uint8_t *msg, modeS_message *mm)
 {
   uint8_t aux [MODES_LONG_MSG_BYTES];
   int     msg_type = mm->msg_type;
@@ -196,7 +199,7 @@ static bool brute_force_AP (const uint8_t *msg, modeS_message *mm)
  * \param out unit  set to either `MODES_UNIT_METERS` or `MODES_UNIT_FEETS`.
  * \retval the altitude.
  */
-static int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit)
+int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit)
 {
   int m_bit = msg[3] & (1 << 6);
   int q_bit = msg[3] & (1 << 4);
@@ -241,7 +244,7 @@ static int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit)
  * Decode the 12 bit AC altitude field (in DF 17 and others).
  * Returns the altitude or 0 if it can't be decoded.
  */
-static int decode_AC12_field (uint8_t *msg, metric_unit_t *unit)
+int decode_AC12_field (uint8_t *msg, metric_unit_t *unit)
 {
   int ret, n, q_bit = msg[5] & 1;
 
@@ -270,7 +273,7 @@ static int decode_AC12_field (uint8_t *msg, metric_unit_t *unit)
  * the original buffer with the fixed version, and returns the position
  * of the error bit. Otherwise if fixing failed, -1 is returned.
  */
-static int fix_single_bit_errors (uint8_t *msg, int bits)
+int fix_single_bit_errors (uint8_t *msg, int bits)
 {
   int     i;
   uint8_t aux [MODES_LONG_MSG_BITS / 8];
@@ -306,7 +309,7 @@ static int fix_single_bit_errors (uint8_t *msg, int bits)
  * This is very slow and should be tried only against DF17 messages that
  * don't pass the checksum, and only with `Modes.error_correct_2` setting.
  */
-static int fix_two_bits_errors (uint8_t *msg, int bits)
+int fix_two_bits_errors (uint8_t *msg, int bits)
 {
   int     j, i;
   uint8_t aux [MODES_LONG_MSG_BITS / 8];
@@ -352,7 +355,7 @@ static int fix_two_bits_errors (uint8_t *msg, int bits)
 
 
 
-static uint32_t CRC_check (const uint8_t *msg, int bits)
+uint32_t CRC_check (const uint8_t *msg, int bits)
 {
   uint32_t crc = 0;
   int      offset = 0;
@@ -410,7 +413,7 @@ static uint32_t CRC_get (const uint8_t *msg, int bits)
   return (CRC);
 }
 
-TDecodeStatus decode_RAW_message (AnsiString MsgIn,modeS_message *mm)
+TDecodeStatus decode_RAW_message (const std::string& MsgIn,modeS_message *mm)
 {
   uint8_t       bin_msg [MODES_LONG_MSG_BYTES];
   int           len, j, msg_len;
@@ -508,7 +511,7 @@ TDecodeStatus decode_RAW_message (AnsiString MsgIn,modeS_message *mm)
  *
  * And split it into fields populating a `modeS_message` structure.
  */
-static int decode_modeS_message (modeS_message *mm, const uint8_t *_msg)
+int decode_modeS_message (modeS_message *mm, const uint8_t *_msg)
 {
   uint32_t    CRC;   /* Computed CRC, used to verify the message CRC. */
   const char *AIS_charset = "?ABCDEFGHIJKLMNOPQRSTUVWXYZ????? ???????????????0123456789??????";

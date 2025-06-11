@@ -4,18 +4,17 @@
 
 #include "Aircraft.h"
 #include "TimeFunctions.h"
-
+#include <cmath>
+using std::floor;
+#include <cstring>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-static int cprModFunction(int a, int b);
-static int cprNLFunction(double lat);
-static int cprNFunction(double lat, int isodd);
-static double cprDlonFunction(double lat, int isodd);
-static void decodeCPR(TADS_B_Aircraft *a);
+
+
 
 //---------------------------------------------------------------------------
-/* Always positive MOD operation, used for CPR decoding. */
-static int cprModFunction(int a, int b)
+// Always positive MOD operation, used for CPR decoding.
+int cprModFunction(int a, int b)
 {
     int res = a % b;
     if (res < 0) res += b;
@@ -23,7 +22,7 @@ static int cprModFunction(int a, int b)
 }
 //---------------------------------------------------------------------------
 /* The NL function uses the precomputed table from 1090-WP-9-14 */
-static int cprNLFunction(double lat)
+int cprNLFunction(double lat)
 {
     if (lat < 0) lat = -lat; /* Table is simmetric about the equator. */
     if (lat < 10.47047130) return 59;
@@ -87,14 +86,14 @@ static int cprNLFunction(double lat)
     else return 1;
 }
 //---------------------------------------------------------------------------
-static int cprNFunction(double lat, int isodd)
+int cprNFunction(double lat, int isodd)
 {
     int nl = cprNLFunction(lat) - isodd;
     if (nl < 1) nl = 1;
     return nl;
 }
 //---------------------------------------------------------------------------
-static double cprDlonFunction(double lat, int isodd)
+double cprDlonFunction(double lat, int isodd)
 {
     return 360.0 / cprNFunction(lat, isodd);
 }
@@ -109,7 +108,7 @@ static double cprDlonFunction(double lat, int isodd)
  *    simplicity. This may provide a position that is less fresh of a few
  *    seconds.
  */
-static void decodeCPR(TADS_B_Aircraft *a)
+void decodeCPR(TADS_B_Aircraft* a)
 {
     const double AirDlat0 = 360.0 / 60;
     const double AirDlat1 = 360.0 / 59;
@@ -137,12 +136,12 @@ static void decodeCPR(TADS_B_Aircraft *a)
                         (lon1 * cprNLFunction(rlat0))) / 131072) + 0.5);
         a->Longitude = cprDlonFunction(rlat0,0) * (cprModFunction(m,ni)+lon0/131072);
         a->Latitude = rlat0;
-    } else {
-        /* Use odd packet. */
-        int ni = cprNFunction(rlat1,1);
-		int m = floor((((lon0 * (cprNLFunction(rlat1)-1)) -
-                        (lon1 * cprNLFunction(rlat1))) / 131072.0) + 0.5);
-        a->Longitude = cprDlonFunction(rlat1,1) * (cprModFunction(m,ni)+lon1/131072);
+    }
+    else {
+        int ni = cprNFunction(rlat1, 1);
+        int m = floor((((lon0 * (cprNLFunction(rlat1) - 1)) -
+            (lon1 * cprNLFunction(rlat1))) / 131072.0) + 0.5);
+        a->Longitude = cprDlonFunction(rlat1, 1) * (cprModFunction(m, ni) + lon1 / 131072);
         a->Latitude = rlat1;
     }
     if (a->Longitude > 180) a->Longitude -= 360;

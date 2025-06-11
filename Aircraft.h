@@ -3,6 +3,7 @@
 #ifndef AircraftH
 #define AircraftH
 #include "DecodeRawADS_B.h"
+#include <cstdint>
 
 #define MODES_NON_ICAO_ADDRESS       (1<<24) // Set on addresses to indicate they are not ICAO addresses
 
@@ -33,7 +34,23 @@ typedef struct
  int                 SpriteImage;
 } TADS_B_Aircraft;
 
+//---------------------------------------------------------------------------
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void RawToAircraft(modeS_message *mm,TADS_B_Aircraft *ADS_B_Aircraft);
+// CPR CO¨ùo ¨ù¡¾¨ú©£¥ìe
+int cprModFunction(int a, int b);
+int cprNLFunction(double lat);
+int cprNFunction(double lat, int isodd);
+double cprDlonFunction(double lat, int isodd);
+void decodeCPR(TADS_B_Aircraft *a);
+
+// RawToAircraft CO¨ùo ¨ù¡¾¨ú©£
+void RawToAircraft(modeS_message *mm, TADS_B_Aircraft *ADS_B_Aircraft);
+
+#ifdef __cplusplus
+}
+#endif
 //---------------------------------------------------------------------------
 #endif

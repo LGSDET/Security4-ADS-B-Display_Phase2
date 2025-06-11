@@ -6,7 +6,7 @@
 #include <gl\glu.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
+#include <cmath>
 #pragma hdrstop
 
 #include "ntds2d.h"
@@ -18,7 +18,7 @@
 
 #pragma package(smart_init)
 
-#define PI 3.1415926535898
+#define PI M_PI
 #define RADIUS 20.0
 #define NUM_SPRITES 81
 #define SPRITE_WIDTH   72
@@ -53,7 +53,7 @@ int MakeAirplaneImages(void)
 	SpriteImage= stbi_load(filename, &width, &height,&nrChannels,0);
 	if (SpriteImage == NULL)
 	{
-		ShowMessage("Unable to load png file");
+		//ShowMessage("Unable to load png file");
 		return(0);
 	}
 

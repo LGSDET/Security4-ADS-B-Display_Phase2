@@ -3,6 +3,9 @@
 #ifndef DecodeRawADS_BH
 #define DecodeRawADS_BH
 //---------------------------------------------------------------------------
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #define TWO_PI             (2 * M_PI)
 #define MODES_PREAMBLE_US             8         /* microseconds */
 #define MODES_LONG_MSG_BITS         112
@@ -23,14 +26,14 @@
  * in RAW mode.
  */
 #define MODES_RAW_HEART_BEAT      "*0000;\n*0000;\n*0000;\n*0000;\n*0000;\n"
-
+#include <stdint.h>
 typedef enum metric_unit_t {
         MODES_UNIT_FEET   = 1,
         MODES_UNIT_METERS = 2
       } metric_unit_t;
 
-#define UNIT_NAME(unit) (unit == MODES_UNIT_METERS ? "meters" : "feet")
-
+#define UNIT_NAME(unit) ((unit) == MODES_UNIT_METERS ? "meters" : "feet")
+#include <string>
 
 typedef struct modeS_message {
         uint8_t  msg [MODES_LONG_MSG_BYTES]; /**< Binary message. */
@@ -95,6 +98,24 @@ typedef enum
   BadMessageEmpty2=8
 } TDecodeStatus;
 
-TDecodeStatus decode_RAW_message(AnsiString MsgIn,modeS_message *mm);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+TDecodeStatus decode_RAW_message(const std::string& MsgIn,modeS_message *mm);
 void InitDecodeRawADS_B(void);
+
+// For unit testing and branch coverage
+int decode_AC13_field(const uint8_t *msg, metric_unit_t *unit);
+int decode_AC12_field(uint8_t *msg, metric_unit_t *unit);
+int fix_single_bit_errors(uint8_t *msg, int bits);
+int fix_two_bits_errors(uint8_t *msg, int bits);
+bool brute_force_AP(const uint8_t *msg, modeS_message *mm);
+bool ICAO_address_recently_seen(uint32_t addr);
+int decode_modeS_message(modeS_message *mm, const uint8_t *_msg);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
