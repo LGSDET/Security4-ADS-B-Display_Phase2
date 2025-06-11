@@ -35,7 +35,7 @@ char* strsep(char** stringp, const char* delim) {
     return start;
 }
 
-/*
+
 // Mock ��ü �� �Լ�
 static TADS_B_Aircraft g_testAircraft;
 static bool g_findCalled = false;
@@ -186,4 +186,4 @@ TEST(SBS_MessageTest, SBS_Message_Decode_AllBranches) {
     char msg8[] = "MSG,3,1,1,ABCDEF,1,2024/06/04,12:34:56.789,2024/06/04,12:34:56.789,KAL123,abc,def,ghi,jkl,mno,pqr,,,,,";
     EXPECT_TRUE(SBS_Message_Decode(msg8, MockFindAircraft, MockCreateAircraft, 1));
     // ���� �Ҵ���� ����(�⺻�� ����)
-}*/
+}

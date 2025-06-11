@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\LatLonConv.h" />
     <ClInclude Include="..\..\ntds2d.h" />
     <ClInclude Include="..\..\PointInPolygon.h" />
+    <ClInclude Include="..\..\SBS_Message.h" />
     <ClInclude Include="..\..\TimeFunctions.h" />
     <ClInclude Include="..\..\TriangulatPoly.h" />
   </ItemGroup>
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\LatLonConv.cpp" />
     <ClCompile Include="..\..\ntds2d.cpp" />
     <ClCompile Include="..\..\PointInPolygon.cpp" />
+    <ClCompile Include="..\..\SBS_Message.cpp" />
     <ClCompile Include="..\..\TimeFunctions.cpp" />
     <ClCompile Include="..\..\TriangulatPoly.cpp" />
   </ItemGroup>

@@ -9,6 +9,7 @@
     <ClCompile Include="..\..\DecodeRawADS_B.cpp" />
     <ClCompile Include="..\..\TimeFunctions.cpp" />
     <ClCompile Include="..\..\TriangulatPoly.cpp" />
+    <ClCompile Include="..\..\SBS_Message.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Aircraft.h" />
@@ -20,5 +21,6 @@
     <ClInclude Include="..\..\TimeFunctions.h" />
     <ClInclude Include="..\..\TriangulatPoly.h" />
     <ClInclude Include="..\..\DecodeRawADS_B.h" />
+    <ClInclude Include="..\..\SBS_Message.h" />
   </ItemGroup>
 </Project>
