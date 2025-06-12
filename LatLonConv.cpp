@@ -240,7 +240,7 @@ TCoordConvStatus VDirect(double Latitude1,  double Longitude1,
   return(OKNOERROR);
 }
 //---------------------------------------------------------------------------
- static bool IsAntipodal(double Latitude1, double Latitude2,
+ bool IsAntipodal(double Latitude1, double Latitude2,
 						 double Longitude1,double Longitude2)
  {
    double la,lo;
@@ -253,7 +253,7 @@ TCoordConvStatus VDirect(double Latitude1,  double Longitude1,
   else return(false);
  }
 //---------------------------------------------------------------------------
- static TCoordConvStatus Antipod(double latin,   double lonin,
+ TCoordConvStatus Antipod(double latin,   double lonin,
 								 double *latout, double *lonout)
 {
   //this function returns the antipod of latin, lonin in latout, lonout
@@ -301,32 +301,32 @@ static double modulus (double const X, double Y)
 }
 #endif
 //---------------------------------------------------------------------------
-static double modulus(double Num1, double Num2)
+double modulus(double Num1, double Num2)
 {
   return(Num1 - Num2 * floor(Num1 / Num2));
 }
 //---------------------------------------------------------------------------
-static double Frac(double Num1)
+double Frac(double Num1)
 {
  return(Num1-((int)Num1));
 }
 //---------------------------------------------------------------------------
-static double sqr(double X)
+double sqr(double X)
 {
  return(X*X);
 }
 //---------------------------------------------------------------------------
-static double ModAzimuth(double az)
+double ModAzimuth(double az)
 {
  return(modulus(az, 2.0 * M_PI));
 }
 //---------------------------------------------------------------------------
-static double ModLatitude(double lat)
+double ModLatitude(double lat)
 {
  return(modulus(lat + M_PI / 2.0, M_PI) - M_PI / 2.0);
 }
 //---------------------------------------------------------------------------
-static double ModLongitude(double lon)
+double ModLongitude(double lon)
 {
  return(modulus(lon + M_PI, 2.0 * M_PI) - M_PI);
 }

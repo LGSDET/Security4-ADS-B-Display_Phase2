@@ -1,4 +1,8 @@
 //---------------------------------------------------------------------------
+#ifdef UNIT_TEST
+  // 테스트에서는 아무 동작 안함
+  #define ShowMessage(msg) ((void)0)
+#endif
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <windows.h>
@@ -6,7 +10,6 @@
 #include <gl\glu.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
 #pragma hdrstop
 
 #include "ntds2d.h"

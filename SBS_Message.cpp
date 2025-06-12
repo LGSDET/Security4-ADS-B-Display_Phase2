@@ -1,12 +1,17 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 
 #pragma hdrstop
-#include "DisplayGUI.h"
+//#include "DisplayGUI.h"
 #include "Aircraft.h"
 #include "SBS_Message.h"
 #include "TimeFunctions.h"
 #include <math.h>
-
+#include <windows.h>
+#include <float.h>
+#ifdef _MSC_VER
+	#define stricmp _stricmp
+#endif
+#define isfinite(x) _finite(x)
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #define SMALL_VAL        0.0001
@@ -125,7 +130,7 @@ static uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2)
 }
 //char  msg [MODES_MAX_SBS_SIZE];
 //---------------------------------------------------------------------------
-bool ModeS_Build_SBS_Message (const modeS_message *mm, TADS_B_Aircraft *a, char *msg)
+bool ModeS_Build_SBS_Message(const modeS_message* mm, TADS_B_Aircraft* a, char* msg, size_t msg_size)
 {
    char *p = msg;
   int   emergency = 0, ground = 0, alert = 0, spi = 0;
@@ -217,7 +222,11 @@ bool ModeS_Build_SBS_Message (const modeS_message *mm, TADS_B_Aircraft *a, char 
 //---------------------------------------------------------------------------
 #define DELIMITER ","
 //---------------------------------------------------------------------------
-bool SBS_Message_Decode( char *msg)
+bool SBS_Message_Decode( char *msg,
+    TADS_B_Aircraft* (*FindAircraft)(uint32_t addr),   // addr�� ��ü�� ã�� �Լ� ������
+    TADS_B_Aircraft* (*CreateAircraft)(uint32_t addr, int spriteImage),  // ���ο� �װ��� ��ü ���� �Լ�
+    int spriteImage                                   // ������ �Ҵ��� sprite ��ȣ
+    )
 {
    bool  HaveSpeed=false;
    bool  HaveHeading=false;
@@ -287,28 +296,11 @@ bool SBS_Message_Decode( char *msg)
      //printf("%06X\n",(int)addr);
      if (non_icao) addr |= MODES_NON_ICAO_ADDRESS;
 
-     ADS_B_Aircraft =(TADS_B_Aircraft *) ght_get(Form1->HashTable,sizeof(addr),&addr);
-     if (ADS_B_Aircraft==NULL)
-        {
-         ADS_B_Aircraft= new TADS_B_Aircraft;
-         ADS_B_Aircraft->ICAO=addr;
-         snprintf(ADS_B_Aircraft->HexAddr,sizeof(ADS_B_Aircraft->HexAddr),"%06X",(int)addr);
-         ADS_B_Aircraft->NumMessagesSBS=0;
-         ADS_B_Aircraft->NumMessagesRaw=0;
-         ADS_B_Aircraft->VerticalRate=0;
-         ADS_B_Aircraft->HaveAltitude=false;
-         ADS_B_Aircraft->HaveLatLon=false;
-         ADS_B_Aircraft->HaveSpeedAndHeading=false;
-         ADS_B_Aircraft->HaveFlightNum=false;
-         ADS_B_Aircraft->SpriteImage=Form1->CurrentSpriteImage;
-         if (Form1->CycleImages->Checked)
-              Form1->CurrentSpriteImage=(Form1->CurrentSpriteImage+1)%Form1->NumSpriteImages;
-		 if (ght_insert(Form1->HashTable,ADS_B_Aircraft,sizeof(addr), &addr) < 0)
-             {
-			  printf("ght_insert Error-Should Not Happen");
-             }
-        }
-
+     ADS_B_Aircraft = FindAircraft(addr);
+    if (ADS_B_Aircraft == NULL)
+    {
+        ADS_B_Aircraft = CreateAircraft(addr, spriteImage);
+    }
       ADS_B_Aircraft->LastSeen =CurrentTime;
       ADS_B_Aircraft->NumMessagesSBS++;
 

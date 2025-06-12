@@ -32,17 +32,17 @@ typedef enum
 						  double *Latitude2, double *Longitude2,
 						  double *Azimuth21);
 
- static double Frac(double Num1);
- static double modulus(double Num1, double Num2);
+ //double Frac(double Num1);
+ double modulus(double Num1, double Num2);
  //static double  modulus (const double  X, double Y);
- static TCoordConvStatus Antipod(double latin,   double lonin,
+ TCoordConvStatus Antipod(double latin,   double lonin,
 						  double *latout, double *lonout);
- static bool IsAntipodal(double Latitude1, double Latitude2,
+ bool IsAntipodal(double Latitude1, double Latitude2,
 				  double Longitude1,double Longitude2);
- static double sqr(double X);
- static double ModAzimuth(double az);
- static double ModLatitude(double lat);
- static double ModLongitude(double lon);
+ double sqr(double X);
+ double ModAzimuth(double az);
+ double ModLatitude(double lat);
+ double ModLongitude(double lon);
 
 
 //---------------------------------------------------------------------------

@@ -35,5 +35,13 @@ typedef struct
 
 
 void RawToAircraft(modeS_message *mm,TADS_B_Aircraft *ADS_B_Aircraft);
+
+int cprModFunction(int a, int b);
+int cprNLFunction(double lat);
+int cprNFunction(double lat, int isodd);
+double cprDlonFunction(double lat, int isodd);
+void decodeCPR(TADS_B_Aircraft *a);
+
+
 //---------------------------------------------------------------------------
 #endif

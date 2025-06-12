@@ -17,7 +17,7 @@
 
 #define error_correct_1 true  /**< Fix 1 bit errors (default: true). */
 #define error_correct_2 true  /**< Fix 2 bit errors (default: false). */
-
+#include <System.hpp>
 /**
  * The `readsb` program will send 5 heart-beats like this
  * in RAW mode.
@@ -97,4 +97,19 @@ typedef enum
 
 TDecodeStatus decode_RAW_message(AnsiString MsgIn,modeS_message *mm);
 void InitDecodeRawADS_B(void);
+static int hex_digit_val (int c);
+int decode_modeS_message (modeS_message *mm, const uint8_t *_msg);
+static int modeS_message_len_by_type (int type);
+static uint32_t CRC_get (const uint8_t *msg, int bits);
+uint32_t CRC_check (const uint8_t *msg, int bits);
+int fix_two_bits_errors (uint8_t *msg, int bits);
+int fix_single_bit_errors (uint8_t *msg, int bits);
+bool brute_force_AP (const uint8_t *msg, modeS_message *mm);
+int decode_AC12_field (uint8_t *msg, metric_unit_t *unit);
+int decode_AC13_field (const uint8_t *msg, metric_unit_t *unit);
+static uint32_t aircraft_get_addr (uint8_t a0, uint8_t a1, uint8_t a2);
+static void ICAO_cache_add_address (uint32_t addr);
+bool ICAO_address_recently_seen (uint32_t addr);
+static uint32_t ICAO_cache_hash_address (uint32_t a);
+
 #endif
