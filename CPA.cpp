@@ -6,9 +6,7 @@
 #pragma package(smart_init)
 #include <stdio.h>
 #include <math.h>
-
-#include <stdio.h>
-#include <math.h>
+#include <cmath>
 
 // Constants
 #define EARTH_RADIUS 6371.0 // Earth's radius in kilometers

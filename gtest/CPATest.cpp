@@ -1,4 +1,4 @@
-﻿#include <vcl.h>
+﻿//#include <vcl.h>
 #include <windows.h>
 
 #include "gtest/gtest.h"

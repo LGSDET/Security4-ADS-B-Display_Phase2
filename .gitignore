@@ -107,3 +107,7 @@ tree.txt
 *.fullhtml
 /UnitTest/UnitTestProject/x64/Debug
 /UnitTest/ADS-B_Geographic/x64/Debug
+/gtest/ADS-B_Geographic/x64/Debug
+/gtest/packages
+/gtest/UnitTestProject/x64/Debug
+/gtest/x64/Debug

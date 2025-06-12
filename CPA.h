@@ -2,6 +2,9 @@
 
 #ifndef CPAH
 #define CPAH
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 //---------------------------------------------------------------------------
 bool computeCPA(double lat1, double lon1,double altitude1, double speed1, double heading1,
 				double lat2, double lon2,double altitude2, double speed2, double heading2,

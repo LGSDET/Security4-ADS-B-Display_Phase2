@@ -5,8 +5,9 @@
 
 #include "TriangulatPoly.h"
 #include <stdlib.h>
-#include <mem.h>
-#include <vcl.h>
+#include <cstring>
+//#include <mem.h>
+//#include <vcl.h>
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)
@@ -152,7 +153,7 @@ typedef struct _Vtx
 #define VX(p, c)    p->coord[c]
 
 /*
- * Decompose concave polygon into triangles 
+ * Decompose concave polygon into triangles
 */
 static long
 decompConcave(pfVec3 *Verts,int NumVerts,  TTriangles ** tlist, long asum, long x, long y)

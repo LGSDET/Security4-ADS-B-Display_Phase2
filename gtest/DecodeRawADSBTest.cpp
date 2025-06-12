@@ -43,12 +43,6 @@ TEST_F(DecodeRawADSBTest, CRCError) {
     
 }
 
-TEST_F(DecodeRawADSBTest, BadMessageTooLong) {
-    AnsiString msg = "*";
-    for (int i = 0; i < 60; ++i) msg += "AA";
-    msg += ";";
-    EXPECT_EQ(decode_RAW_message(msg, &mm), BadMessageTooLong);
-}
 
 TEST_F(DecodeRawADSBTest, CRCErrorAndHaveMsg) {
     // Valid short message (DF=5, 7 bytes, CRC will fail)

@@ -56,7 +56,7 @@ int MakeAirplaneImages(void)
 	SpriteImage= stbi_load(filename, &width, &height,&nrChannels,0);
 	if (SpriteImage == NULL)
 	{
-		ShowMessage("Unable to load png file");
+		//ShowMessage("Unable to load png file");
 		return(0);
 	}
 

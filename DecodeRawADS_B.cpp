@@ -1,12 +1,15 @@
 //---------------------------------------------------------------------------
 
 #pragma hdrstop
-#include <vcl.h>
+//#include <vcl.h>
 #include "DecodeRawADS_B.h"
-#include "DisplayGUI.h"
+//#include "DisplayGUI.h"
 #include <cstring>
 #include <string.h>
-
+#include <cmath>
+#include <ctime>
+using std::hypot;
+using std::atan2;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 static uint32_t         *ICAO_cache=NULL;               /**< Recently seen ICAO addresses. */
@@ -394,7 +397,7 @@ static uint32_t CRC_get (const uint8_t *msg, int bits)
   return (CRC);
 }
 
-TDecodeStatus decode_RAW_message (AnsiString MsgIn,modeS_message *mm)
+TDecodeStatus decode_RAW_message (const std::string& MsgIn,modeS_message *mm)
 {
   uint8_t       bin_msg [MODES_LONG_MSG_BYTES];
   int           len, j, msg_len;

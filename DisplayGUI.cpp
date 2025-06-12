@@ -1213,8 +1213,7 @@ void __fastcall TTCPClientRawHandleThread::HandleInput(void)
    Form1->RecordRawStream->WriteLine(IntToStr(CurrentTime));
    Form1->RecordRawStream->WriteLine(StringMsgBuffer);
   }
-
-  Status=decode_RAW_message(StringMsgBuffer, &mm);
+  Status=decode_RAW_message(std::string(StringMsgBuffer.c_str()), &mm);
   if (Status==HaveMsg)
   {
    TADS_B_Aircraft *ADS_B_Aircraft;

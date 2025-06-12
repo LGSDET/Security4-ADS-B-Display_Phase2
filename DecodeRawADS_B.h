@@ -3,6 +3,9 @@
 #ifndef DecodeRawADS_BH
 #define DecodeRawADS_BH
 //---------------------------------------------------------------------------
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #define TWO_PI             (2 * M_PI)
 #define MODES_PREAMBLE_US             8         /* microseconds */
 #define MODES_LONG_MSG_BITS         112
@@ -17,20 +20,20 @@
 
 #define error_correct_1 true  /**< Fix 1 bit errors (default: true). */
 #define error_correct_2 true  /**< Fix 2 bit errors (default: false). */
-#include <System.hpp>
+
 /**
  * The `readsb` program will send 5 heart-beats like this
  * in RAW mode.
  */
 #define MODES_RAW_HEART_BEAT      "*0000;\n*0000;\n*0000;\n*0000;\n*0000;\n"
-
+#include <stdint.h>
 typedef enum metric_unit_t {
         MODES_UNIT_FEET   = 1,
         MODES_UNIT_METERS = 2
       } metric_unit_t;
 
 #define UNIT_NAME(unit) (unit == MODES_UNIT_METERS ? "meters" : "feet")
-
+#include <string>
 
 typedef struct modeS_message {
         uint8_t  msg [MODES_LONG_MSG_BYTES]; /**< Binary message. */
@@ -95,7 +98,7 @@ typedef enum
   BadMessageEmpty2=8
 } TDecodeStatus;
 
-TDecodeStatus decode_RAW_message(AnsiString MsgIn,modeS_message *mm);
+TDecodeStatus decode_RAW_message(const std::string& MsgIn,modeS_message *mm);
 void InitDecodeRawADS_B(void);
 static int hex_digit_val (int c);
 int decode_modeS_message (modeS_message *mm, const uint8_t *_msg);
