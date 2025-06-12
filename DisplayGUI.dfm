@@ -51,8 +51,6 @@ object Form1: TForm1
     Color = clWindow
     Constraints.MaxWidth = 250
     TabOrder = 0
-    ExplicitLeft = 1244
-    ExplicitHeight = 664
     object Panel1: TPanel
       Left = 1
       Top = 533
@@ -60,7 +58,6 @@ object Form1: TForm1
       Height = 147
       Align = alBottom
       TabOrder = 0
-      ExplicitTop = 516
       object Label12: TLabel
         Left = 8
         Top = 8
@@ -819,8 +816,6 @@ object Form1: TForm1
     OnInit = ObjectDisplayInit
     OnResize = ObjectDisplayResize
     OnPaint = ObjectDisplayPaint
-    ExplicitWidth = 1244
-    ExplicitHeight = 664
   end
   object MainMenu1: TMainMenu
     Left = 24
