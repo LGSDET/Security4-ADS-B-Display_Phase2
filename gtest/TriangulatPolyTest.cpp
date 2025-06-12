@@ -101,7 +101,7 @@ TEST(TriangulatPolyTest, TriangulatePoly_InvalidInput) {
     EXPECT_EQ(triangulatePoly(verts1, 1, &tlist), -1);//todo
     // Note: nullptr input removed to avoid SEH exception if not supported
 }
-/*
+
 // 2. Degenerate polygon: all points colinear
 TEST(TriangulatPolyTest, TriangulatePoly_Colinear) {
     pfVec3 verts[3] = { {0,0,0}, {1,1,0}, {2,2,0} };
@@ -123,7 +123,7 @@ TEST(TriangulatPolyTest, TriangulatePoly_SelfIntersecting) {
     TTriangles* tlist = nullptr;
     EXPECT_EQ(triangulatePoly(verts, 4, &tlist), 2);//todo
 }
-*/
+
 // 4. Minimal valid triangle
 TEST(TriangulatPolyTest, TriangulatePoly_Triangle) {
     pfVec3 verts[3] = { {0,0,0}, {1,0,0}, {0,1,0} };
@@ -166,14 +166,14 @@ TEST(TriangulatPolyTest, Orientation2DPolygon_Clockwise) {
     EXPECT_EQ(orientation2D_Polygon(cw, 3), CLOCKWISE);
 }
 
-/*
+
 // 9. triangulatePoly: polygon with all points the same
 TEST(TriangulatPolyTest, TriangulatePoly_AllPointsSame) {
     pfVec3 verts[4] = { {1,1,0}, {1,1,0}, {1,1,0}, {1,1,0} };
     TTriangles* tlist = nullptr;
     EXPECT_EQ(triangulatePoly(verts, 4, &tlist), 2);//todo
 }
-*/
+
 // TriangulatPoly.cpp: memory allocation failure simulation (edge case)
 // This test is only meaningful if you can inject allocation failure, but we simulate with large input.
 TEST(TriangulatPolyTest, TriangulatePoly_AllocFail_Simulation) {
@@ -220,7 +220,6 @@ TEST(TriangulatPolyTest, TriangulatePoly_ReversedWinding) {
     }
 }
 
-/*
 // TriangulatPoly.cpp: degenerate polygon (all points on a line, but more than 3)
 TEST(TriangulatPolyTest, TriangulatePoly_DegenerateLine) {
     pfVec3 verts[4] = { {0,0,0}, {1,1,0}, {2,2,0}, {3,3,0} };
@@ -236,7 +235,6 @@ TEST(TriangulatPolyTest, TriangulatePoly_DegenerateLine) {
         tlist = next;
     }
 }
-*/
 
 // TriangulatPoly.cpp: minimal concave polygon (pentagon with a 'dent')
 TEST(TriangulatPolyTest, TriangulatePoly_MinimalConcave) {
