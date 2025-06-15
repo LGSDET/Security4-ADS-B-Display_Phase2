@@ -128,3 +128,7 @@ AnsiString Encryptor::Decrypt(const AnsiString& encryptedBase64) {
 
     return AnsiString(reinterpret_cast<const char*>(plainText.data()), plaintext_len);
 }
+
+Encryptor::~Encryptor() {
+    // 특별히 해줄 일이 없으면 그냥 빈 구현 가능
+}

@@ -29,7 +29,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
 
     AnsiString password = edtPassword->Text;
 
-    HINTERNET hInternet = InternetOpen(L"MyApp", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    HINTERNET hInternet = InternetOpen(TEXT("MyApp"), INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet)
     {
         ShowMessage(L"InternetOpen Failure!");
@@ -37,7 +37,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         return;
     }
 
-    HINTERNET hConnect = InternetConnect(
+    HINTERNET hConnect = InternetConnectW(
         hInternet,
         API_HOST,  // ✨ config.h 사용
         INTERNET_DEFAULT_HTTPS_PORT,
@@ -51,7 +51,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
         return;
     }
 
-    HINTERNET hRequest = HttpOpenRequest(
+    HINTERNET hRequest = HttpOpenRequestW(
         hConnect, L"POST", API_PATH,  // ✨ config.h 사용
         NULL, NULL, NULL,
         INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE, 0);
@@ -67,7 +67,7 @@ void __fastcall TFormPassword::btnOkClick(TObject *Sender)
     LPCWSTR headers =
         L"Content-Type: application/json\r\n"
         L"x-api-key: " API_KEY L"\r\n";  // ✨ config.h 사용
-    if (!HttpAddRequestHeaders(hRequest, headers, -1, HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE))
+    if (!HttpAddRequestHeadersW(hRequest, headers, -1, HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE))
     {
         ShowMessage(L"HttpAddRequestHeaders Failure!");
 		SecureLog::LogWarning("InternetOpen Failure!!!!");
