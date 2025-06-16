@@ -220,6 +220,9 @@
             <DependentOn>checkPassword.h</DependentOn>
             <BuildOrder>38</BuildOrder>
         </CppCompile>
+        <CppCompile Include="checkPassword_logic.cpp">
+            <BuildOrder>47</BuildOrder>
+        </CppCompile>
         <CppCompile Include="CPA.cpp">
             <DependentOn>CPA.h</DependentOn>
             <BuildOrder>37</BuildOrder>
