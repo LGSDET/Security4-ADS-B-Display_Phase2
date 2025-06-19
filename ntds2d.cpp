@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 //---------------------------------------------------------------------------
 #ifdef UNIT_TEST
   // 테스트에서는 아무 동작 안함
