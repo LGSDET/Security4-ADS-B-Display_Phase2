@@ -101,7 +101,7 @@ TEST(TriangulatPolyTest, TriangulatePoly_InvalidInput) {
     EXPECT_EQ(triangulatePoly(verts1, 1, &tlist), -1);//todo
     // Note: nullptr input removed to avoid SEH exception if not supported
 }
-/*
+
 // 2. Degenerate polygon: all points colinear
 TEST(TriangulatPolyTest, TriangulatePoly_Colinear) {
     pfVec3 verts[3] = { {0,0,0}, {1,1,0}, {2,2,0} };
@@ -123,7 +123,7 @@ TEST(TriangulatPolyTest, TriangulatePoly_SelfIntersecting) {
     TTriangles* tlist = nullptr;
     EXPECT_EQ(triangulatePoly(verts, 4, &tlist), 2);//todo
 }
-*/
+
 // 4. Minimal valid triangle
 TEST(TriangulatPolyTest, TriangulatePoly_Triangle) {
     pfVec3 verts[3] = { {0,0,0}, {1,0,0}, {0,1,0} };
@@ -269,4 +269,16 @@ TEST(TriangulatPolyTest, TriangulatePoly_VerticalHorizontalEdge) {
         free(tlist);
         tlist = next;
     }
+}
+
+#include "gtest/gtest.h"
+#include "DecodeRawADS_B.h"
+
+TEST(UnitNameMacroTest, UnsafeMacroFailsWithExpression) {
+    int a = MODES_UNIT_METERS;
+    int b = 1;
+
+    const char* result = UNIT_NAME(a + b);
+    EXPECT_STREQ(result, "feet");
+
 }

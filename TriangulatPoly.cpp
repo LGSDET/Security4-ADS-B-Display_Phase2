@@ -23,7 +23,7 @@ long triangulatePoly(pfVec3 *Verts,int NumVerts,  TTriangles ** tlist)
 {
 	double  *p0, *p1;
 	double  as[3], dx1, dy1, dx2, dy2, max;
-    long    i, j, flag, asum, csum, index, x, y;
+    long    i, j, flag=0, asum, csum, index, x, y;
 	 TTriangles           *tri;
     pfVec3 *temp_coord;
 
