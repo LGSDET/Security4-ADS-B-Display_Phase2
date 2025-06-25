@@ -1,0 +1,78 @@
+<dashboard instructions>
+*files
+DashboardWindow.cpp
+DashboardWindow.dfm
+DashboardWindow.h
+DashboardParser.cpp
+DashboardParser.h
+DashboardFormatStyled.cpp
+DashboardFormatStyled.h
+DashboardFetcher.cpp
+DashboardFetcher.h
+DashboardData.h
+
+
+*System Overview
+The Dashboard module fetches status information provided by Raspberry Pi in real-time and displays it to the user through a GUI.
+Data flow:
+Raspberry Pi Status (HTTP/JSON) → 
+DashboardFetcher (JSON type) → 
+DashboardParser (DashboardData type)→ 
+DashboardFormatStyled → 
+DashboardWindow (TRichEdit display)
+
+
+*Prerequisites
+Windows OS
+RAD Studio / C++ Builder
+Internet connection to Raspberry Pi device (default HTTP API)
+
+*Build
+Open ADS-B-Display project in RAD Studio.
+Build the project.
+Run the application.
+
+*How to use
+1. Launch Application
+Run the ADS-B-Display.exe (or from RAD Studio)
+
+2. Initial Screen
+You will see a button for connect/disconnect &
+a Edit window for url
+
+3. Connect to Device
+Enter the target device URL (default: http://192.168.137.233:8081/status)
+
+4. Click Connect button
+
+5. View Status
+Dashboard will display:
+************************************************
+CPU usage: <value> %          → color coded
+Temperature: <value> °C       → color coded
+Disk usage: <value> %
+Disk free: <value> GB
+Memory usage: <value> %
+Memory free: <value> MB
+************************************************
+
+6. Colors indicate status:
+
+Level	Color
+normal	Black
+warning	Orange
+critical	Red
+
+7. Disconnect
+Click Disconnect button to stop monitoring.
+
+8. Auto-Refresh
+The dashboard refreshes every 5 seconds while connected.
+This interval can be customized in source code (StatusTimer.Interval).
+
+
+
+
+
+
+
