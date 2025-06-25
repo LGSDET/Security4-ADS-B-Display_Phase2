@@ -109,3 +109,8 @@ tree.txt
 *.fullhtml
 /UnitTest/UnitTestProject/x64/Debug
 /UnitTest/ADS-B_Geographic/x64/Debug
+/googletest/out/build/x64-Debug
+/gtest/ADS-B_Geographic/x64
+/gtest/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.7
+/gtest/UnitTestProject/x64
+/gtest/x64
