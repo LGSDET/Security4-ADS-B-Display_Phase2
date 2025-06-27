@@ -4,7 +4,7 @@
         <ProjectVersion>20.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">Unittest</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
@@ -138,6 +138,10 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>(None)</Manifest_File>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <LinkPackageStatics>vcl.lib;rtl.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</LinkPackageStatics>
+        <ILINK_LibraryPath>..\Map\libgefetch;..\Map\png;..\Map\zlib;..\Map\jpeg;..\Map\libwwfetch;..\googletest\googletest;..\googletest\googletest\include;..\Map\MapSrc\;C:\OpenSSL-Win64\include;$(BDSINCLUDE)\windows\vcl;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <BCC_Defines>UNIT_TEST;$(BCC_Defines)</BCC_Defines>
+        <IncludePath>C:\OpenSSL-Win64\include;$(IncludePath)</IncludePath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
@@ -163,19 +167,33 @@
             <DependentOn>..\Aircraft.h</DependentOn>
             <BuildOrder>4</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\checkPassword_logic.cpp">
+            <BuildOrder>32</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\CPA.cpp">
             <DependentOn>..\CPA.h</DependentOn>
             <BuildOrder>5</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\CryptoLoader.cpp">
+            <DependentOn>..\CryptoLoader.h</DependentOn>
+            <BuildOrder>27</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\DecodeRawADS_B.cpp">
             <DependentOn>..\DecodeRawADS_B.h</DependentOn>
             <BuildOrder>11</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\Encryptor.cpp">
+            <DependentOn>..\Encryptor.h</DependentOn>
+            <BuildOrder>28</BuildOrder>
         </CppCompile>
         <CppCompile Include="..\googletest\googletest\src\gtest-all.cc">
             <BuildOrder>4</BuildOrder>
         </CppCompile>
         <CppCompile Include="AircraftTest.cpp">
             <BuildOrder>8</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="checkPasswordTest.cpp">
+            <BuildOrder>31</BuildOrder>
         </CppCompile>
         <CppCompile Include="CPATest.cpp">
             <BuildOrder>7</BuildOrder>
@@ -185,6 +203,9 @@
         </CppCompile>
         <CppCompile Include="DecodeRawADSBTest.cpp">
             <BuildOrder>10</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="EncryptorTest.cpp">
+            <BuildOrder>25</BuildOrder>
         </CppCompile>
         <CppCompile Include="LatLonConvTest.cpp">
             <BuildOrder>12</BuildOrder>
@@ -197,6 +218,9 @@
         </CppCompile>
         <CppCompile Include="SBS_MessageTest.cpp">
             <BuildOrder>21</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="SecureLog_test.cpp">
+            <BuildOrder>26</BuildOrder>
         </CppCompile>
         <CppCompile Include="TestMain.cpp">
             <BuildOrder>7</BuildOrder>
@@ -236,6 +260,10 @@
             <DependentOn>..\SBS_Message.h</DependentOn>
             <BuildOrder>20</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\SecureLog.cpp">
+            <DependentOn>..\SecureLog.h</DependentOn>
+            <BuildOrder>29</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\TimeFunctions.cpp">
             <DependentOn>..\TimeFunctions.h</DependentOn>
             <BuildOrder>8</BuildOrder>
@@ -243,6 +271,10 @@
         <CppCompile Include="..\TriangulatPoly.cpp">
             <DependentOn>..\TriangulatPoly.h</DependentOn>
             <BuildOrder>19</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\Util.cpp">
+            <DependentOn>..\Util.h</DependentOn>
+            <BuildOrder>30</BuildOrder>
         </CppCompile>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

@@ -268,3 +268,15 @@ TEST(TriangulatPolyTest, TriangulatePoly_VerticalHorizontalEdge) {
         tlist = next;
     }
 }
+
+#include "gtest/gtest.h"
+#include "DecodeRawADS_B.h"
+
+TEST(UnitNameMacroTest, UnsafeMacroFailsWithExpression) {
+    int a = MODES_UNIT_METERS;
+    int b = 1;
+
+    const char* result = UNIT_NAME(a + b);
+    EXPECT_STREQ(result, "feet");
+
+}

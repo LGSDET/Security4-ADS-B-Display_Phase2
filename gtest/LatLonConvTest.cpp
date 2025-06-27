@@ -72,6 +72,21 @@ TEST(LatLonConvTest, VDirect_ZeroDist) {
     EXPECT_EQ(az21, 0.0);
 }
 
+// VDirect의 s==0.0 처리 미흡을 다양한 입력으로 검증하는 테스트
+TEST(LatLonConvTest, VDirect_AlmostZeroDist_MultiCase) {
+    double lat = 37.0, lon = 127.0, az = 0.0;
+    double test_dists[] = { 1e-12, -1e-12, 1e-15, -1e-15, 1e-20, -1e-20 };
+    for (double s : test_dists) {
+        double lat2 = -999, lon2 = -999, az21 = -999;
+        TCoordConvStatus status = VDirect(lat, lon, az, s, &lat2, &lon2, &az21);
+        if (status != ZERODIST) {
+            ADD_FAILURE() << "VDirect(" << lat << ", " << lon << ", " << az << ", " << s << ") "
+                << "expected ZERODIST(" << ZERODIST << "), but got " << status
+                << ". lat2=" << lat2 << ", lon2=" << lon2 << ", az21=" << az21;
+        }
+    }
+}
+
 // Antipod 정상 동작 테스트
 TEST(LatLonConvTest, Antipod_Basic) {
     double latout, lonout;
