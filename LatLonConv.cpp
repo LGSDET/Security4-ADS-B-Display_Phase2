@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 //---------------------------------------------------------------------------
 #include "LatLonConv.h"
 #include <cmath>
@@ -240,3 +242,71 @@ TCoordConvStatus VDirect(double Latitude1,  double Longitude1,
 
   return(OKNOERROR);
 }
+//---------------------------------------------------------------------------
+ bool IsAntipodal(double Latitude1, double Latitude2,
+						 double Longitude1,double Longitude2)
+ {
+   double la,lo;
+   int eflag;
+
+   eflag = Antipod(Latitude1, Longitude1, &la, &lo);  //compute antipodal values
+  if (eflag != OKNOERROR)  return(false);
+
+  if ((Latitude2 == la) && (Longitude2 == lo)) return(true);
+  else return(false);
+ }
+//---------------------------------------------------------------------------
+ TCoordConvStatus Antipod(double latin,   double lonin,
+								 double *latout, double *lonout)
+{
+  //this function returns the antipod of latin, lonin in latout, lonout
+  //NOTE: angles are assumed to be in decimal degrees
+
+  return(OKNOERROR);
+
+}
+//---------------------------------------------------------------------------
+#if 0
+static double modulus (double const X, double Y)
+{
+ double Z,Result;
+
+  Result = X / Y;
+  Z = (int)Result;
+  if (Frac(Result) < 0.0) Z = Z - 1.0;
+  Result = X - Y * Z;
+  return(Result);
+}
+#endif
+//---------------------------------------------------------------------------
+double modulus(double Num1, double Num2)
+{
+  return(Num1 - Num2 * floor(Num1 / Num2));
+}
+//---------------------------------------------------------------------------
+double Frac(double Num1)
+{
+ return(Num1-((int)Num1));
+}
+//---------------------------------------------------------------------------
+double sqr(double X)
+{
+ return(X*X);
+}
+//---------------------------------------------------------------------------
+double ModAzimuth(double az)
+{
+ return(modulus(az, 2.0 * M_PI));
+}
+//---------------------------------------------------------------------------
+double ModLatitude(double lat)
+{
+ return(modulus(lat + M_PI / 2.0, M_PI) - M_PI / 2.0);
+}
+//---------------------------------------------------------------------------
+double ModLongitude(double lon)
+{
+ return(modulus(lon + M_PI, 2.0 * M_PI) - M_PI);
+}
+//---------------------------------------------------------------------------
+

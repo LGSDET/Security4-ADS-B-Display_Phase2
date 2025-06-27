@@ -1545,6 +1545,35 @@ void __fastcall TForm1::SBSConnectButtonClick(TObject *Sender)
   }
 
 }
+
+TADS_B_Aircraft* MyFindAircraft(uint32_t addr)
+{
+    return (TADS_B_Aircraft *) ght_get(Form1->HashTable, sizeof(addr), &addr);
+}
+
+TADS_B_Aircraft* MyCreateAircraft(uint32_t addr, int spriteImage)
+{
+    auto* aircraft = new TADS_B_Aircraft;
+    aircraft->ICAO = addr;
+    snprintf(aircraft->HexAddr, sizeof(aircraft->HexAddr), "%06X", (int)addr);
+    aircraft->NumMessagesSBS=0;
+    aircraft->NumMessagesRaw=0;
+    aircraft->VerticalRate=0;
+    aircraft->HaveAltitude=false;
+    aircraft->HaveLatLon=false;
+    aircraft->HaveSpeedAndHeading=false;
+    aircraft->HaveFlightNum=false;
+    aircraft->SpriteImage=spriteImage;
+
+    if (ght_insert(Form1->HashTable, aircraft, sizeof(addr), &addr) < 0)
+        printf("ght_insert Error-Should Not Happen");
+
+    if (Form1->CycleImages->Checked)
+        Form1->CurrentSpriteImage = (Form1->CurrentSpriteImage + 1) % Form1->NumSpriteImages;
+
+    return aircraft;
+}
+
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 TADS_B_Aircraft* MyFindAircraft(uint32_t addr)
@@ -1612,6 +1641,7 @@ void __fastcall TTCPClientSBSHandleThread::HandleInput(void)
       nextSpriteImage
     );
 }
+
 //---------------------------------------------------------------------------
 // Constructor for the thread class
 __fastcall TTCPClientSBSHandleThread::TTCPClientSBSHandleThread(bool value) : TThread(value)

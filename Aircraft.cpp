@@ -108,7 +108,7 @@ double cprDlonFunction(double lat, int isodd)
  *    simplicity. This may provide a position that is less fresh of a few
  *    seconds.
  */
-void decodeCPR(TADS_B_Aircraft* a)
+void decodeCPR(TADS_B_Aircraft *a)
 {
     const double AirDlat0 = 360.0 / 60;
     const double AirDlat1 = 360.0 / 59;
@@ -118,7 +118,7 @@ void decodeCPR(TADS_B_Aircraft* a)
     double lon1 = a->odd_cprlon;
 
     /* Compute the Latitude Index "j" */
-    int j = floor(((59*lat0 - 60*lat1) / 131072) + 0.5);
+    int j = std::floor(((59*lat0 - 60*lat1) / 131072) + 0.5);
     double rlat0 = AirDlat0 * (cprModFunction(j,60) + lat0 / 131072);
     double rlat1 = AirDlat1 * (cprModFunction(j,59) + lat1 / 131072);
 
@@ -132,7 +132,7 @@ void decodeCPR(TADS_B_Aircraft* a)
     if (a->even_cprtime > a->odd_cprtime) {
         /* Use even packet. */
         int ni = cprNFunction(rlat0,0);
-        int m = floor((((lon0 * (cprNLFunction(rlat0)-1)) -
+        int m = std::floor((((lon0 * (cprNLFunction(rlat0)-1)) -
                         (lon1 * cprNLFunction(rlat0))) / 131072) + 0.5);
         a->Longitude = cprDlonFunction(rlat0,0) * (cprModFunction(m,ni)+lon0/131072);
         a->Latitude = rlat0;
@@ -142,6 +142,12 @@ void decodeCPR(TADS_B_Aircraft* a)
         int m = floor((((lon0 * (cprNLFunction(rlat1) - 1)) -
             (lon1 * cprNLFunction(rlat1))) / 131072.0) + 0.5);
         a->Longitude = cprDlonFunction(rlat1, 1) * (cprModFunction(m, ni) + lon1 / 131072);
+    } else {
+        /* Use odd packet. */
+        int ni = cprNFunction(rlat1,1);
+		int m = std::floor((((lon0 * (cprNLFunction(rlat1)-1)) -
+                        (lon1 * cprNLFunction(rlat1))) / 131072.0) + 0.5);
+        a->Longitude = cprDlonFunction(rlat1,1) * (cprModFunction(m,ni)+lon1/131072);
         a->Latitude = rlat1;
     }
     if (a->Longitude > 180) a->Longitude -= 360;

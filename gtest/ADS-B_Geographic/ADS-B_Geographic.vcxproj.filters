@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Aircraft.cpp" />
+    <ClCompile Include="..\..\CPA.cpp" />
+    <ClCompile Include="..\..\LatLonConv.cpp" />
+    <ClCompile Include="..\..\ntds2d.cpp" />
+    <ClCompile Include="..\..\PointInPolygon.cpp" />
+    <ClCompile Include="..\..\DecodeRawADS_B.cpp" />
+    <ClCompile Include="..\..\TimeFunctions.cpp" />
+    <ClCompile Include="..\..\TriangulatPoly.cpp" />
+    <ClCompile Include="..\..\SBS_Message.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Aircraft.h" />
+    <ClInclude Include="..\..\CPA.h" />
+    <ClInclude Include="..\..\dms.h" />
+    <ClInclude Include="..\..\LatLonConv.h" />
+    <ClInclude Include="..\..\ntds2d.h" />
+    <ClInclude Include="..\..\PointInPolygon.h" />
+    <ClInclude Include="..\..\TimeFunctions.h" />
+    <ClInclude Include="..\..\TriangulatPoly.h" />
+    <ClInclude Include="..\..\DecodeRawADS_B.h" />
+    <ClInclude Include="..\..\SBS_Message.h" />
+  </ItemGroup>
+</Project>

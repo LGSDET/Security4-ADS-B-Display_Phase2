@@ -1,0 +1,45 @@
+[1] 2025-06-10 13:56:31 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 292fe804e45d9c3db284cf61a39978ab402d0f97038e15d8419d8ef2d4c458bb
+[2] 2025-06-10 13:56:31 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 781ce0e839412bd2f4b5e549c5eae4e7e8f7b87a29eaac7cb23632361a3bbcba
+[3] 2025-06-10 13:56:31 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 0474cb49aaabe905f0ac4a4f09cfd894c284e6c2a1549b71a613558b4053ce19
+[1] 2025-06-10 14:00:12 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 4750bcc77e5af489748979748388185da2897ff7542a3e9aefbbc097253b3bd1
+[2] 2025-06-10 14:00:12 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: c9e8b6b9e13cbd8fd20e226d77c2e9ae6d7fddde77acc51b10004063602d2df3
+[3] 2025-06-10 14:00:12 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 8429d406f99b100bab7bf7b564acac22b38d66f249217e14665dd66cdafc9244
+[1] 2025-06-10 15:28:30 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: b3b2c49e31703e273699d3454a3d0879ad3db1b869ad3be315bdabff5cdf8228
+[2] 2025-06-10 15:28:30 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 803906f47dca9f7d6c2ffbcd478487e2c67061fba3ed548a02ff566013d9712f
+[3] 2025-06-10 15:28:30 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: d21ab39e7515379507144edc63a57b823b57ab817333b7a871089acb23f3dd3b
+[1] 2025-06-10 15:37:41 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: c75601a061cbdd5e39c84eaedaceb332a7b6dc450653b522bf20d5f1d30cb5d4
+[2] 2025-06-10 15:37:41 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: ce479eb25cc1f7d05413ae153a0eed4fe233c36784629a43676594c0855f1982
+[3] 2025-06-10 15:37:41 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: be66dacc3d1c5515b8ac20e3868936f24b3744af9c906e4f0140b8dbd24b66b3
+[1] 2025-06-10 21:19:58 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 1193b6a325af7b720c02884e9d95786bc40fc440e843219ebb8ddc8998d03341
+[2] 2025-06-10 21:19:58 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: aa16f97daeeeffc3f173a60ae55734569576879052899db523e1838efb8f1f1a
+[3] 2025-06-10 21:19:58 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 2d8680b21df21ed3b73334dd042bfc4f6dce4a67dd655a4e641c5bf17a94a553
+[1] 2025-06-10 22:49:40 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: ce2e319fdf57f0902e81a8519dcbc073f230ddb001628ea54c077ab4f3f9e35b
+[2] 2025-06-10 22:49:40 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 6d500dd1e2632e3904564b513a1c61581c86ddbf8147f73f3bfdcf04118e9dbc
+[3] 2025-06-10 22:49:40 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 7761918f2e8fa51b059ceb38eb5b6c3e2298124a06117e539c71eed406f7b22c
+[1] 2025-06-11 17:16:47 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 0ae6ffafc263b0cdde2394ccfe0f889028c3ce827e5c0cb24a81b69104b02b4d
+[2] 2025-06-11 17:16:47 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: c4a242cf88b10abbc33f73a24d2418b2eff00561ade9d6ed47dd652000d3d7a9
+[3] 2025-06-11 17:16:47 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 42d7bc6a56ff010106d030adbe7e8aef3567924b676d4f03691c3306a9109fdc
+[4] 2025-06-11 17:17:16 [INFO]  - try to connect with IP=192.168.137.233, Port=30005 | HMAC: f5a46fa4b7d693c1e7cc48b1cf1c233ae0acb5849ab65b368abbf1ee17e31ca7
+[5] 2025-06-11 17:17:37 [ERROR]  - 서버 연결 실패 | HMAC: 86bbb51c5f9dc5578d1552c6ec1e1f8b6a3e5ac4b1aa0ee93368fbf122680995
+[6] 2025-06-11 17:17:37 [WARNING]  - TTCPClientRawHandleThread::disconnected | HMAC: 633b5de33940f039213053de4a18cffd34b58ee4f0a0a91d588eae3e3032edd7
+[7] 2025-06-11 17:17:37 [ERROR]  - TLS protocol error | HMAC: c2c4c45000cd397df0a8b45fdb3dc472a0f9d1e63e854929ea93ff41575c7037
+[8] 2025-06-11 17:17:37 [WARNING]  - TTCPClientRawHandleThread::received empty | HMAC: 44a73a88402b4c01d173e3839a766ade847c2bb7fc0e62828ad968f209a00adb
+[9] 2025-06-11 17:17:37 [WARNING]  - Raw Decode Error: 8 | HMAC: dcf917e1cb3e7474169c838165fde993e9a8f4189591f560f74dbc460b40acdf
+[1] 2025-06-11 17:20:33 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 7957eda7714d092ab28dafc3169d338ea8c1278f2e6d5d719114f3bfd1254bef
+[2] 2025-06-11 17:20:33 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 4012838d965072539f3bca3c721cb0ade53ce70551b5b5e8176d702b0c870ec8
+[3] 2025-06-11 17:20:33 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 2aad62ff7d7df2d444e7d24f93d7c78470924bc971a605ccfb2d859ad824be96
+[4] 2025-06-11 17:20:52 [INFO]  - try to connect with IP=192.168.137.233, Port=30005 | HMAC: 7494344c7db4ddee09338f2db57427f36af945d67d55b975d5c9ae5132ffb460
+[5] 2025-06-11 17:21:13 [ERROR]  - 서버 연결 실패 | HMAC: f31dfdaf7a358af10fc14bc85d7666c1ba91cfdbac2b3030c590d041ca4b1edf
+[6] 2025-06-11 17:21:13 [WARNING]  - TTCPClientRawHandleThread::disconnected | HMAC: 02e8b290884163177d70a16815f1494313871458fbab7dbb5aead28435e34f5c
+[7] 2025-06-11 17:21:13 [ERROR]  - TLS protocol error | HMAC: cd9aa9de6edf34d4aade4f0723cdce57c51d99426b671c87a6540e87fef71df4
+[8] 2025-06-11 17:21:13 [WARNING]  - TTCPClientRawHandleThread::received empty | HMAC: 6bd1db674f4596ded20668ce2b68957b3892c8d73a72f339b313a4ffb47b9983
+[9] 2025-06-11 17:21:13 [WARNING]  - Raw Decode Error: 8 | HMAC: eb4e2e6d6f9f8bee73b5d6009dd520da65cd1cd9e9f017a6cee1a6cd4e984c28
+[1] 2025-06-11 17:35:09 [INFO]  - 프로그램이 시작되었습니다. Version : 1.0  | HMAC: 4079777cd6c58f64ef9ea3e1f788e7e46ce7391ec2535a9de8c157731a7afba4
+[2] 2025-06-11 17:35:09 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 3fcc9e5bbf3c64cd75f21edf6441d09d3a0ee62814a60dbecd32b883e91e85ee
+[3] 2025-06-11 17:35:09 [INFO]  - OpenSSL 초기화 및 인증서 설정 완료 | HMAC: 4cd3be2ae7fb1674a1a84e3129b72a6712ccf6e366cc3e0c33b96a10ec33f737
+[4] 2025-06-11 17:35:22 [INFO]  - try to connect with IP=192.168.137.233, Port=30005 | HMAC: c6088d3a424d4527646636447de0baae7b2ecf21c4895bd40f2918b121588061
+[5] 2025-06-11 17:35:43 [ERROR]  - 서버 연결 실패 | HMAC: 56bcd52a826a3b0663415b6fc97fe12c7609565e374b8bd0714ed38a1516a5c8
+[6] 2025-06-11 17:35:43 [WARNING]  - TTCPClientRawHandleThread::disconnected | HMAC: d1ab592b0ede59239234b4b08781977f16a3a02b5c90f80bca6ec9e5e3d0effc
+[7] 2025-06-11 17:35:43 [ERROR]  - TLS protocol error | HMAC: a89bfef82178aa4d604d27ec3d7104f5abbd7f29588dcf834bf853253649bd19
+[8] 2025-06-11 17:35:43 [WARNING]  - TTCPClientRawHandleThread::received empty | HMAC: 9a526c457f16e3de09f0588a83fab183f2cd8ef454d47550bb0e37f1517be8d2
+[9] 2025-06-11 17:35:43 [WARNING]  - Raw Decode Error: 8 | HMAC: 7832d59eaf04124c712d6406cfd81deb0fbc3f2c97496ff675a9a30fde6962f0

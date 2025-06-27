@@ -14,7 +14,7 @@ bool OpenSSLLoader::Load() {
     if (hModule)
         return true;
 
-    SetDllDirectory(L"C:\\OpenSSL-Win64\\bin");
+    SetDllDirectoryW(L"C:\\OpenSSL-Win64\\bin");
     hModule = LoadLibraryW(L"C:\\OpenSSL-Win64\\bin\\libssl-3-x64.dll");
     if (!hModule) {
 		MessageBox(nullptr, _T("OpenSSL DLL 로드 실패!"), _T("Error"), MB_OK | MB_ICONERROR);

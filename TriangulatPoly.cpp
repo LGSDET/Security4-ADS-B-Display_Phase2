@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 //---------------------------------------------------------------------------
 
 
@@ -21,7 +23,7 @@ long triangulatePoly(pfVec3 *Verts,int NumVerts,  TTriangles ** tlist)
 {
 	double  *p0, *p1;
 	double  as[3], dx1, dy1, dx2, dy2, max;
-    long    i, j, flag, asum, csum, index, x, y;
+    long    i, j, flag=0, asum, csum, index, x, y;
 	 TTriangles           *tri;
     pfVec3 *temp_coord;
 
@@ -153,7 +155,7 @@ typedef struct _Vtx
 #define VX(p, c)    p->coord[c]
 
 /*
- * Decompose concave polygon into triangles 
+ * Decompose concave polygon into triangles
 */
 static long
 decompConcave(pfVec3 *Verts,int NumVerts,  TTriangles ** tlist, long asum, long x, long y)

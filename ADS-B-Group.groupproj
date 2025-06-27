@@ -21,6 +21,9 @@
         <Projects Include="ADS-B-Display.cbproj">
             <Dependencies>HashTable\Lib\HashTableLib.cbproj;Map\zlib\zlib.cbproj;Map\png\png.cbproj;Map\libgefetch\libgefetch.cbproj;Map\jpeg\jpeg.cbproj</Dependencies>
         </Projects>
+        <Projects Include="gtest\Unittest.cbproj">
+            <Dependencies>ADS-B-Display.cbproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +86,23 @@
     <Target Name="ADS-B-Display:Make" DependsOnTargets="HashTableLib:Make;zlib:Make;png:Make;libgefetch:Make;jpeg:Make">
         <MSBuild Projects="ADS-B-Display.cbproj" Targets="Make"/>
     </Target>
+    <Target Name="Unittest" DependsOnTargets="ADS-B-Display">
+        <MSBuild Projects="gtest\Unittest.cbproj"/>
+    </Target>
+    <Target Name="Unittest:Clean" DependsOnTargets="ADS-B-Display:Clean">
+        <MSBuild Projects="gtest\Unittest.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Unittest:Make" DependsOnTargets="ADS-B-Display:Make">
+        <MSBuild Projects="gtest\Unittest.cbproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="jpeg;libgefetch;png;zlib;HashTableLib;ADS-B-Display"/>
+        <CallTarget Targets="jpeg;libgefetch;png;zlib;HashTableLib;ADS-B-Display;Unittest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="jpeg:Clean;libgefetch:Clean;png:Clean;zlib:Clean;HashTableLib:Clean;ADS-B-Display:Clean"/>
+        <CallTarget Targets="jpeg:Clean;libgefetch:Clean;png:Clean;zlib:Clean;HashTableLib:Clean;ADS-B-Display:Clean;Unittest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="jpeg:Make;libgefetch:Make;png:Make;zlib:Make;HashTableLib:Make;ADS-B-Display:Make"/>
+        <CallTarget Targets="jpeg:Make;libgefetch:Make;png:Make;zlib:Make;HashTableLib:Make;ADS-B-Display:Make;Unittest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

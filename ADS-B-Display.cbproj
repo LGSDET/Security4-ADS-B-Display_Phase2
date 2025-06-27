@@ -6,7 +6,7 @@
         <AppType>Application</AppType>
         <MainSource>ADS-B-Display.cpp</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">ADS-B-Display</ProjectName>
         <TargetedPlatforms>1048579</TargetedPlatforms>
@@ -160,9 +160,10 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <LinkPackageImports>rtl.bpi;vcl.bpi;IndySystem.bpi;IndyCore.bpi;bcbsmp.bpi;vclx.bpi;OpenGLPanel_DP.bpi</LinkPackageImports>
-        <BCC_IncludePath>Map\jpeg;Map\png;Map\zlib;Map\libgefetch;Map\libwwfetch;HashTable\Lib;$(BCC_IncludePath)</BCC_IncludePath>
+        <BCC_IncludePath>Map\jpeg;Map\png;Map\zlib;Map\libgefetch;Map\libwwfetch;HashTable\Lib;C:\OpenSSL-Win64\include;$(BCC_IncludePath)</BCC_IncludePath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <ILINK_LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;$(ILINK_LibraryPath)</ILINK_LibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64x)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -219,6 +220,9 @@
             <FormType>dfm</FormType>
             <DependentOn>checkPassword.h</DependentOn>
             <BuildOrder>38</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="checkPassword_logic.cpp">
+            <BuildOrder>47</BuildOrder>
         </CppCompile>
         <CppCompile Include="CPA.cpp">
             <DependentOn>CPA.h</DependentOn>

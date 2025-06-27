@@ -1,3 +1,5 @@
+ï»¿// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 //---------------------------------------------------------------------------
 
 #pragma hdrstop
@@ -223,9 +225,9 @@ bool ModeS_Build_SBS_Message(const modeS_message* mm, TADS_B_Aircraft* a, char* 
 #define DELIMITER ","
 //---------------------------------------------------------------------------
 bool SBS_Message_Decode( char *msg,
-    TADS_B_Aircraft* (*FindAircraft)(uint32_t addr),   // addr·Î °´Ã¼¸¦ Ã£´Â ÇÔ¼ö Æ÷ÀÎÅÍ
-    TADS_B_Aircraft* (*CreateAircraft)(uint32_t addr, int spriteImage),  // »õ·Î¿î Ç×°ø±â °´Ã¼ »ı¼º ÇÔ¼ö
-    int spriteImage                                   // ´ÙÀ½¿¡ ÇÒ´çÇÒ sprite ¹øÈ£
+    TADS_B_Aircraft* (*FindAircraft)(uint32_t addr),   // addrë¡œ ê°ì²´ë¥¼ ì°¾ëŠ” í•¨ìˆ˜ í¬ì¸í„°
+    TADS_B_Aircraft* (*CreateAircraft)(uint32_t addr, int spriteImage),  // ìƒˆë¡œìš´ í•­ê³µê¸° ê°ì²´ ìƒì„± í•¨ìˆ˜
+    int spriteImage                                   // ë‹¤ìŒì— í• ë‹¹í•  sprite ë²ˆí˜¸
     )
 {
    bool  HaveSpeed=false;

@@ -25,7 +25,7 @@ bool CryptoLoader::Load() {
     if (hCrypto)
         return true;
 
-    SetDllDirectory(L"C:\\OpenSSL-Win64\\bin");
+    SetDllDirectory(TEXT("C:\\OpenSSL-Win64\\bin"));
     hCrypto = LoadLibraryW(L"C:\\OpenSSL-Win64\\bin\\libcrypto-3-x64.dll");
 
     if (!hCrypto) {
