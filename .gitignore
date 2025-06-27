@@ -111,3 +111,6 @@ tree.txt
 /gtest/packages
 /gtest/UnitTestProject/x64/Debug
 /gtest/x64/Debug
+/gtest/ADS-B_Geographic/x64/Release
+/gtest/UnitTestProject/x64/Release
+/gtest/x64/Release
