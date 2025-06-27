@@ -138,11 +138,6 @@ void decodeCPR(TADS_B_Aircraft *a)
         a->Latitude = rlat0;
     }
     else {
-        int ni = cprNFunction(rlat1, 1);
-        int m = floor((((lon0 * (cprNLFunction(rlat1) - 1)) -
-            (lon1 * cprNLFunction(rlat1))) / 131072.0) + 0.5);
-        a->Longitude = cprDlonFunction(rlat1, 1) * (cprModFunction(m, ni) + lon1 / 131072);
-    } else {
         /* Use odd packet. */
         int ni = cprNFunction(rlat1,1);
 		int m = std::floor((((lon0 * (cprNLFunction(rlat1)-1)) -
